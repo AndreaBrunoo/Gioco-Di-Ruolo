@@ -1,69 +1,93 @@
-using System;
-using System.Collections.Generic;
 using Gioco.Dominio.Modelli;
 using Gioco.Dominio.Enum;
 
 namespace Gioco.Dominio.Mappa
 {
-    /// <summary>
-    /// Gestisce gli incontri casuali con nemici.
-    /// </summary>
     public class ServizioIncontri
     {
-        private readonly Random _random = new();
+        private readonly Random _rng = new Random();
 
-        /// <summary>
-        /// Determina se avviene un incontro casuale.
-        /// </summary>
+        // Probabilità base di incontro
+        private const int ProbBase = 30; // 30%
+
+        // Probabilità incontro raro
+        private const int ProbRaro = 5;  // 5%
+
+        // Probabilità miniboss casuale
+        private const int ProbMiniBoss = 1; // 1%
+
+        // ---------------------------------------------------------
+        // DETERMINA SE AVVIENE UN INCONTRO
+        // ---------------------------------------------------------
         public bool AvvieneIncontro(CellaMappa cella)
         {
             if (!cella.HaNemici)
                 return false;
 
-            // 20% di probabilità di incontro
-            int tiro = _random.Next(1, 101);
-            return tiro <= 20;
+            int probabilita = ProbBase;
+
+            // Modificatori per tipo cella
+            switch (cella.Tipo)
+            {
+                case TipoCella.Strada:
+                    probabilita -= 10; // meno incontri
+                    break;
+
+                case TipoCella.BoscoFitto:
+                    probabilita += 15; // più incontri
+                    break;
+
+                case TipoCella.Grotta:
+                    probabilita += 25; // quasi garantito
+                    break;
+
+                case TipoCella.Arena:
+                    return true; // incontro forzato
+            }
+
+            int roll = _rng.Next(0, 100);
+            return roll < probabilita;
         }
 
-        /// <summary>
-        /// Restituisce un nemico casuale dal pool della cella.
-        /// </summary>
-        public Nemico GeneraNemicoDaPool(int idPool)
+        // ---------------------------------------------------------
+        // GENERA NEMICO DAL POOL
+        // ---------------------------------------------------------
+        public Nemico GeneraNemicoDaPool(PoolNemici pool)
         {
-            // Per ora: nemico fittizio.
-            // In futuro: caricho i pool veri.
-
-            return new Nemico
+            // Miniboss casuale?
+            if (pool.Nemici.Any(n => n.Boss))
             {
-                Id = 999,
-                Nome = "Slime Verde",
-                Boss = false,
-                LivelloMinaccia = 1,
-                Statistiche = new Statistiche
+                int rollBoss = _rng.Next(0, 100);
+                if (rollBoss < ProbMiniBoss)
                 {
-                    SaluteMassima = 30,
-                    SaluteAttuale = 30,
-                    Attacco = 8,
-                    Difesa = 3,
-                    Velocita = 5,
-                    ManaMassimo = 10,
-                    ManaAttuale = 10
-                },
-                MoltiplicatoriElementali = new Dictionary<TipoElemento, double>
-                {
-                    { TipoElemento.Neutro, 1.0 },
-                    { TipoElemento.Fuoco, 1.5 }, // Debole al fuoco
-                    { TipoElemento.Ghiaccio, 1.0 },
-                    { TipoElemento.Veleno, 1.0 },
-                    { TipoElemento.Sacro, 1.0 },
-                    { TipoElemento.Ombra, 1.0 }
-                },
-                TabellaLoot = new TabellaLoot
-                {
-                    MoneteMin = 1,
-                    MoneteMax = 5
+                    return pool.Nemici.First(n => n.Boss);
                 }
-            };
+            }
+
+            // Incontro raro?
+            int rollRaro = _rng.Next(0, 100);
+            if (rollRaro < ProbRaro)
+            {
+                var rari = pool.Nemici.Where(n => n.LivelloMinaccia >= 5).ToList();
+                if (rari.Count > 0)
+                    return rari[_rng.Next(rari.Count)];
+            }
+
+            // Nemico normale
+            var normali = pool.Nemici.Where(n => !n.Boss).ToList();
+            return normali[_rng.Next(normali.Count)];
+        }
+
+        // ---------------------------------------------------------
+        // GENERA NEMICO DATO IL POOL ID
+        // ---------------------------------------------------------
+        public Nemico? GeneraNemicoDaPoolId(int poolId, List<PoolNemici> poolTotali)
+        {
+            var pool = poolTotali.FirstOrDefault(p => p.Id == poolId);
+            if (pool == null)
+                return null;
+
+            return GeneraNemicoDaPool(pool);
         }
     }
 }

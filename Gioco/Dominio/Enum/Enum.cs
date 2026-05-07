@@ -1,23 +1,35 @@
 namespace Gioco.Dominio.Enum
 {
-    public enum TipoCella
+    public enum Rarita
     {
-        Strada,
-        Villaggio,
-        Dungeon,
-        StanzaBoss,
-        Minigioco
+        Comune,
+        NonComune,
+        Raro,
+        Epico,
+        Leggendario
     }
 
-    public enum TipoClassePersonaggio
+    public enum TipoAbilita
+    {
+        Attiva,
+        Passiva
+    }
+
+    public enum StatoQuest
+    {
+        NonIniziata,
+        InCorso,
+        Completata,
+        Consegnata
+    }
+
+    public enum ClassePersonaggio
     {
         Guerriero,
         Mago,
         Ladro,
-        Chierico,
-        Ranger,
-        Paladino,
-        Barbaro
+        Tank,
+        Arcere,
     }
 
     public enum TipoElemento
@@ -62,5 +74,47 @@ namespace Gioco.Dominio.Enum
         Stordito,
         Sanguinamento,
         Rallentato
+    }
+
+    public enum TipoCella
+    {
+        // Mappa 1
+
+        Piazza,
+        Taverna,
+        Mercante,
+        Tempio,
+        Uscita,
+
+        // Mappa 2
+
+        Strada,
+        BoscoFitto,
+        Radura,
+        Grotta,
+        Arena,
+
+        // Mappa 3
+
+        Campi,
+        Accampamento,
+        Rovine,
+
+        // Mappa 4
+
+        SentieroMontano,
+        Caverna,
+        Ponte,
+
+        // Mappa 5
+
+        Corridoio,
+        Sala,
+        Altare,
+
+        // Per test
+
+        Villaggio,
+        Dungeon,
     }
 }

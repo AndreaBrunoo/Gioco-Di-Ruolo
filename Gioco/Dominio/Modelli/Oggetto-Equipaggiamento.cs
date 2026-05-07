@@ -19,6 +19,7 @@ namespace Gioco.Dominio.Modelli
 
         public int Valore { get; set; }
         public int Rarita { get; set; }
+        public int Quantita { get; set; }
     }
 
     public class Equipaggiamento

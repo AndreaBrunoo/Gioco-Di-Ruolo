@@ -8,7 +8,7 @@ namespace Gioco.Dominio.Modelli
         public int Id { get; set; }
         public string Nome { get; set; } = string.Empty;
 
-        public TipoClassePersonaggio Classe { get; set; }
+        public ClassePersonaggio Classe { get; set; }
 
         public int Livello { get; set; }
         public int Esperienza { get; set; }
@@ -29,5 +29,10 @@ namespace Gioco.Dominio.Modelli
         public int PosX { get; set; }
         public int PosY { get; set; }
         public int IdMappa { get; set; }
+        public List<Quest>? QuestAttive { get; set; }
+        public List<Quest> QuestCompletate { get; set; } = new();
+
+        public List<Abilita> AbilitaSbloccate { get; set; } = new();
+        public List<Abilita> AbilitaDisponibili { get; set; } = new();
     }
 }

@@ -7,9 +7,6 @@ namespace Gioco.Dominio.Modelli
     {
         public int Id { get; set; }
         public string Nome { get; set; } = string.Empty;
-
-        public bool Boss { get; set; }
-
         public Statistiche Statistiche { get; set; } = new();
 
         public Dictionary<TipoElemento, double> MoltiplicatoriElementali { get; set; } = new();
@@ -21,19 +18,33 @@ namespace Gioco.Dominio.Modelli
         public int LivelloMinaccia { get; set; }
 
         public TabellaLoot TabellaLoot { get; set; } = new();
+
+        public bool Boss { get; set; }
+        public int Fase { get; set; } = 1;
+
+        public List<Attacco> AttacchiFase2 { get; set; } = new();
+        public List<Attacco> AttacchiFase3 { get; set; } = new();
+
+        public int SogliaFase2 { get; set; } = 50; // % di vita
+        public int SogliaFase3 { get; set; } = 20; // % di vita
+
+        public string? NomeFase2 { get; set; }
+        public string? NomeFase3 { get; set; }
     }
 
     public class TabellaLoot
     {
+        public int IdNemico { get; set; }
+        public List<LootItem> PossibiliLoot { get; set; } = new();
         public int MoneteMin { get; set; }
         public int MoneteMax { get; set; }
-
-        public List<VoceLoot> Oggetti { get; set; } = new();
     }
 
-    public class VoceLoot
+    public class LootItem
     {
-        public Oggetto Oggetto { get; set; } = null!;
-        public int ProbabilitaDrop { get; set; }
+        public string Nome { get; set; } = "";
+        public Rarita Rarita { get; set; }
+        public int Quantita { get; set; } = 1;
     }
+
 }

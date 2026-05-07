@@ -1,50 +1,96 @@
-using System.Collections.Generic;
 using Gioco.Dominio.Modelli;
 
 namespace Gioco.Dominio.Mappa
 {
-    /// <summary>
-    /// Gestisce la mappa e il movimento del personaggio.
-    /// </summary>
     public class ServizioMappa
     {
-        private readonly Dictionary<(int idMappa, int x, int y), CellaMappa> _celle;
+        private readonly Dictionary<int, List<CellaMappa>> _mappe;
 
-        public ServizioMappa(List<CellaMappa> celle)
+        public ServizioMappa(
+            List<CellaMappa> celleVillaggio,
+            List<CellaMappa> celleBosco,
+            List<CellaMappa> cellePianure,
+            List<CellaMappa> celleMontagna,
+            List<CellaMappa> celleRovine)
         {
-            _celle = new Dictionary<(int, int, int), CellaMappa>();
-
-            foreach (var cella in celle)
+            _mappe = new Dictionary<int, List<CellaMappa>>
             {
-                _celle[(cella.IdMappa, cella.X, cella.Y)] = cella;
-            }
+                { 1, celleVillaggio },
+                { 2, celleBosco },
+                { 3, cellePianure },
+                { 4, celleMontagna },
+                { 5, celleRovine }
+            };
         }
 
-        /// <summary>
-        /// Restituisce la cella in cui si trova il personaggio.
-        /// </summary>
-        public CellaMappa? GetCella(Personaggio personaggio)
+        // ---------------------------------------------------------
+        // OTTIENI CELLA CORRENTE
+        // ---------------------------------------------------------
+        public CellaMappa? GetCella(Personaggio p)
         {
-            _celle.TryGetValue((personaggio.IdMappa, personaggio.PosX, personaggio.PosY), out var cella);
-            return cella;
+            if (!_mappe.ContainsKey(p.IdMappa))
+                return null;
+
+            return _mappe[p.IdMappa]
+                .FirstOrDefault(c => c.X == p.PosX && c.Y == p.PosY);
         }
 
-        /// <summary>
-        /// Prova a muovere il personaggio nella direzione indicata.
-        /// </summary>
-        public bool Muovi(Personaggio personaggio, int dx, int dy)
+        // ---------------------------------------------------------
+        // MUOVI IL PERSONAGGIO
+        // ---------------------------------------------------------
+        public bool Muovi(Personaggio p, int dx, int dy)
         {
-            int nuovoX = personaggio.PosX + dx;
-            int nuovoY = personaggio.PosY + dy;
+            int nuovoX = p.PosX + dx;
+            int nuovoY = p.PosY + dy;
 
-            if (_celle.ContainsKey((personaggio.IdMappa, nuovoX, nuovoY)))
-            {
-                personaggio.PosX = nuovoX;
-                personaggio.PosY = nuovoY;
-                return true;
-            }
+            if (!_mappe.ContainsKey(p.IdMappa))
+                return false;
 
-            return false;
+            var celle = _mappe[p.IdMappa];
+
+            var nuovaCella = celle.FirstOrDefault(c => c.X == nuovoX && c.Y == nuovoY);
+
+            if (nuovaCella == null)
+                return false;
+
+            // Movimento valido
+            p.PosX = nuovoX;
+            p.PosY = nuovoY;
+
+            return true;
+        }
+
+        // ---------------------------------------------------------
+        // CAMBIO MAPPA (es. uscita dal villaggio → bosco)
+        // ---------------------------------------------------------
+        public bool CambiaMappa(Personaggio p, int nuovaMappa, int x, int y)
+        {
+            if (!_mappe.ContainsKey(nuovaMappa))
+                return false;
+
+            p.IdMappa = nuovaMappa;
+            p.PosX = x;
+            p.PosY = y;
+
+            return true;
+        }
+
+        // ---------------------------------------------------------
+        // CONTROLLA SE LA CELLA HA NEMICI
+        // ---------------------------------------------------------
+        public bool CellaHaNemici(Personaggio p)
+        {
+            var cella = GetCella(p);
+            return cella != null && cella.HaNemici;
+        }
+
+        // ---------------------------------------------------------
+        // OTTIENI POOL NEMICI DELLA CELLA
+        // ---------------------------------------------------------
+        public int? GetPoolNemici(Personaggio p)
+        {
+            var cella = GetCella(p);
+            return cella?.IdPoolNemici;
         }
     }
 }
