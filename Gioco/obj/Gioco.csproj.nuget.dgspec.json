@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Documents\\Gioco-di-ruolo\\Gioco\\Gioco.csproj": {}
+    "C:\\Users\\sviluppatore\\Documents\\Gioco\\Gioco-Di-Ruolo\\Gioco\\Gioco.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Documents\\Gioco-di-ruolo\\Gioco\\Gioco.csproj": {
+    "C:\\Users\\sviluppatore\\Documents\\Gioco\\Gioco-Di-Ruolo\\Gioco\\Gioco.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Documents\\Gioco-di-ruolo\\Gioco\\Gioco.csproj",
+        "projectUniqueName": "C:\\Users\\sviluppatore\\Documents\\Gioco\\Gioco-Di-Ruolo\\Gioco\\Gioco.csproj",
         "projectName": "Gioco",
-        "projectPath": "C:\\Users\\User\\Documents\\Gioco-di-ruolo\\Gioco\\Gioco.csproj",
-        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Documents\\Gioco-di-ruolo\\Gioco\\obj\\",
+        "projectPath": "C:\\Users\\sviluppatore\\Documents\\Gioco\\Gioco-Di-Ruolo\\Gioco\\Gioco.csproj",
+        "packagesPath": "C:\\Users\\sviluppatore\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\sviluppatore\\Documents\\Gioco\\Gioco-Di-Ruolo\\Gioco\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\sviluppatore\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
