@@ -4,12 +4,12 @@ namespace Gioco.Dominio.Modelli
 {
     public class Inventario
     {
-        public int SlotMassimi { get; } = 10;
+        public int CapacitaMassima { get; } = 10;
         public List<Oggetto> Oggetti { get; } = new();
 
-        public bool Pieno => Oggetti.Count >= SlotMassimi;
+        public bool Pieno => Oggetti.Count >= CapacitaMassima;
 
-        public bool ProvaAggiungi(Oggetto oggetto)
+        public bool Aggiungi(Oggetto oggetto)
         {
             if (Pieno)
                 return false;

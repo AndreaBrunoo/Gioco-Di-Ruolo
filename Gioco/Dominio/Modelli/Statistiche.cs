@@ -10,18 +10,17 @@ namespace Gioco.Dominio.Modelli
         public int ManaMassimo { get; set; }
         public int ManaAttuale { get; set; }
 
-        public Statistiche Clona()
+        public Statistiche(int hp, int atk, int def, int vel, int mana)
         {
-            return new Statistiche
-            {
-                SaluteMassima = SaluteMassima,
-                SaluteAttuale = SaluteAttuale,
-                Attacco = Attacco,
-                Difesa = Difesa,
-                Velocita = Velocita,
-                ManaMassimo = ManaMassimo,
-                ManaAttuale = ManaAttuale
-            };
+            SaluteMassima = hp;
+            SaluteAttuale = hp;
+            Attacco = atk;
+            Difesa = def;
+            Velocita = vel;
+            ManaMassimo = mana;
+            ManaAttuale = mana;
         }
+
+        public Statistiche() : this(1, 1, 1, 1, 1) { }
     }
 }

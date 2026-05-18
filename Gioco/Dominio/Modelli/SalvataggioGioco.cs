@@ -1,4 +1,3 @@
-
 namespace Gioco.Dominio.Modelli
 {
     /// <summary>
@@ -7,10 +6,12 @@ namespace Gioco.Dominio.Modelli
     public class SalvataggioGioco
     {
         public Personaggio Personaggio { get; set; } = null!;
+
         public int IdMappa { get; set; }
         public int PosX { get; set; }
         public int PosY { get; set; }
 
-        public Quest? QuestAttiva { get; set; }
+        public List<Quest> QuestAttive { get; set; } = new();
+        public List<Quest> QuestCompletate { get; set; } = new();
     }
 }

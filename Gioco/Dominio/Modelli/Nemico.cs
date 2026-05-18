@@ -31,20 +31,4 @@ namespace Gioco.Dominio.Modelli
         public string? NomeFase2 { get; set; }
         public string? NomeFase3 { get; set; }
     }
-
-    public class TabellaLoot
-    {
-        public int IdNemico { get; set; }
-        public List<LootItem> PossibiliLoot { get; set; } = new();
-        public int MoneteMin { get; set; }
-        public int MoneteMax { get; set; }
-    }
-
-    public class LootItem
-    {
-        public string Nome { get; set; } = "";
-        public Rarita Rarita { get; set; }
-        public int Quantita { get; set; } = 1;
-    }
-
 }

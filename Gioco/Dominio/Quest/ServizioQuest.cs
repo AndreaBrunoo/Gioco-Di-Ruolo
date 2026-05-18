@@ -32,7 +32,7 @@ namespace Gioco.Dominio.Quest
             }
 
             npc.QuestDaDare.Stato = StatoQuest.InCorso;
-            personaggio.QuestAttiva = npc.QuestDaDare;
+            personaggio.QuestAttive.Add(npc.QuestDaDare);
 
             log.Add($"📜 Hai accettato la quest: {npc.QuestDaDare.Titolo}");
             log.Add(npc.DialogoIniziale);

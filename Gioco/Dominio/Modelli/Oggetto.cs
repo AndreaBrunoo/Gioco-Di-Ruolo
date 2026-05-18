@@ -18,16 +18,7 @@ namespace Gioco.Dominio.Modelli
         public TipoElemento? Elemento { get; set; }
 
         public int Valore { get; set; }
-        public int Rarita { get; set; }
+        public Rarita Rarita { get; set; }
         public int Quantita { get; set; }
-    }
-
-    public class Equipaggiamento
-    {
-        public Oggetto? Arma { get; set; }
-        public Oggetto? Testa { get; set; }
-        public Oggetto? Corpo { get; set; }
-        public Oggetto? Gambe { get; set; }
-        public Oggetto? Accessorio { get; set; }
     }
 }
