@@ -11,15 +11,15 @@ namespace GiocoV1.Servizi
             _griglia = griglia;
         }
 
-        public string Muovi(Personaggio personaggio, string direzione)
+        public string Muovi(Personaggio personaggio, char direzione)
         {
             int nuovoX = personaggio.PosX;
             int nuovoY = personaggio.PosY;
 
-            if (direzione == "w" || direzione == "W") nuovoY--;
-            if (direzione == "s" || direzione == "S") nuovoY++;
-            if (direzione == "d" || direzione == "D") nuovoX++;
-            if (direzione == "a" || direzione == "A") nuovoX--;
+            if (direzione == 'w' || direzione == 'W') nuovoY--;
+            if (direzione == 's' || direzione == 'S') nuovoY++;
+            if (direzione == 'd' || direzione == 'D') nuovoX++;
+            if (direzione == 'a' || direzione == 'A') nuovoX--;
 
             // Controllo limiti
             if (nuovoX < 0 || nuovoX >= _griglia.GetLength(1) ||
