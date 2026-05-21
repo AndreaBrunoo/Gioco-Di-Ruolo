@@ -1,10 +1,10 @@
 ﻿using GiocoV1.Modelli;
 using GiocoV1.Servizi;
-
 class Program
 {
-    // Prima cosa da fare Comandi nello switch
-    // Seconda cosa alleggerire il while ClassePersonaggio  
+    // Cose da fare
+    // Comandi nello switch
+    // Le frasi di benvenuto
 
     // Cancella solo la riga del prompt, non tutto lo schermo
     // Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
@@ -12,26 +12,15 @@ class Program
     // char e = Console.ReadKey(true).KeyChar;
     // Qualsiasi carattere va avanti
     // Console.ReadKey();
-
     static void Main()
     {
         Console.Clear();
-
         // 1) CREAZIONE MAPPA
         var mappa = ServizioMappa.CaricaMappa("Mappa_principale.json");
-
         // scegli la sezione di spawn
-        var sezione = mappa.Sezioni.FirstOrDefault(s => s.Nome == "Foresta Tutorial");
-
-        if (sezione == null)
-        {
-            Console.WriteLine("ERRORE: La sezione 'Foresta Tutorial' non esiste nel JSON!");
-            return;
-        }
-
+        var sezione = mappa.Sezioni.FirstOrDefault(s => s.Nome == "Foresta Tutorial") ?? mappa.Sezioni.First();
         // crea la griglia per il movimento
         var griglia = ServizioMappa.CreaGriglia(sezione);
-
         // movimento come sempre
         var movimento = new ServizioMovimento(griglia);
 
@@ -44,7 +33,6 @@ class Program
             Console.Clear();
         }
         while (string.IsNullOrEmpty(nome));
-
         Console.Clear();
         var personaggio = new Personaggio
         {
@@ -58,33 +46,25 @@ class Program
         bool deciso = true;
         while (deciso)
         {
+            Console.Clear();
             Console.WriteLine();
             Console.WriteLine($"{nome} scegli una classe:");
             for (int i = 0; i < servizioClassi.ClassiDisponibili.Count; i++)
-            {
                 Console.WriteLine($"{i + 1}) {servizioClassi.ClassiDisponibili[i].Nome}");
-            }
 
-            char sceltaClasseChar = Console.ReadKey().KeyChar;
+            char sceltaClasseChar = Console.ReadKey(true).KeyChar;
             if (int.TryParse(sceltaClasseChar.ToString(), out int sceltaClasseInt))
             {
-                if (sceltaClasseInt < 1 || sceltaClasseInt > servizioClassi.ClassiDisponibili.Count)
-                {
-                    Console.Clear();
-                    Console.WriteLine();
-                    Console.WriteLine($"Il numero {sceltaClasseInt} non è nella lista");
-                    continue;
-                }
-                Console.Clear();
+                if (sceltaClasseInt < 1 || sceltaClasseInt > servizioClassi.ClassiDisponibili.Count) continue;
                 while (true)
                 {
+                    Console.Clear();
                     var classeSelezionata = servizioClassi.ClassiDisponibili[sceltaClasseInt - 1];
                     Console.WriteLine($"{classeSelezionata.Nome}");
                     Console.WriteLine($"Statistiche iniziali: {classeSelezionata.Salute} HP, {classeSelezionata.Attacco} ATK, {classeSelezionata.Difesa} DEF, {classeSelezionata.Velocita} VEL");
                     Console.WriteLine();
                     Console.Write("[E] Conferma  Indietro[Q]");
-                    char decisione = Console.ReadKey().KeyChar;
-
+                    char decisione = Console.ReadKey(true).KeyChar;
                     if (decisione == 'e' || decisione == 'E')
                     {
                         servizioClassi.ApplicaClasse(personaggio, classeSelezionata);
@@ -94,61 +74,47 @@ class Program
                         deciso = false;
                         break;
                     }
-                    else if (decisione == 'q' || decisione == 'Q')
-                    {
-                        Console.Clear();
-                        break;
-                    }
-                    else
-                    {
-                        Console.Clear();
-                        Console.WriteLine();
-                        Console.WriteLine($"Il carattere '{decisione}' non è valido");
-                        continue;
-                    }
+                    else if (decisione == 'q' || decisione == 'Q') break;
+                    else continue;
                 }
             }
-            else
-            {
-                Console.Clear();
-                Console.WriteLine();
-                Console.WriteLine($"Il carattere '{sceltaClasseChar}' non è nella lista");
-                continue;
-            }
+            else continue;
         }
         TastiConversazione();
 
         // 4) MOSTRA POSIZIONE INIZIALE
         var cellaIniziale = griglia[personaggio.PosY, personaggio.PosX];
         Console.Clear();
-        Console.WriteLine($"Benvenuto {personaggio.Nome}!");
+        Console.WriteLine($"Benvenuto {personaggio.Nome}!"); // DA FARE
+        TastiConversazione();
+        Console.Clear();
         Console.WriteLine($"Ti trovi nella {cellaIniziale!.Nome}. {cellaIniziale.Descrizione}");
+        Console.WriteLine("Dove vuoi andare? ");
         Console.WriteLine();
-        Console.WriteLine("Comandi: [W] = Su  [S] = Giù  [A] = Sinistra  [D] = Destra");
-        Console.WriteLine("----------------------------------------------");
 
         // 5) LOOP DI GIOCO
         while (true)
         {
-            Console.WriteLine("Dove vuoi andare? ");
-            Console.WriteLine();
-            Console.Write("[R] Menù  [W] = Su  [S] = Giù  [A] = Sinistra  [D] = Destra");
+            Console.Write("[R] Menù  [W] Su  [S] Giù  [A] Sinistra  [D] Destra");
             char direzione = Console.ReadKey(true).KeyChar;
             Console.Clear();
-            if (direzione == 'r' || direzione == 'R')
-            {
-                // stampa menu
-                continue;
-            }
-
+            if (direzione == 'r' || direzione == 'R') Menu(personaggio);
             string risultato = movimento.Muovi(personaggio, direzione);
             Console.WriteLine(risultato);
-
             Console.WriteLine($"Posizione attuale: X={personaggio.PosX}, Y={personaggio.PosY}");
             Console.WriteLine();
         }
     }
-
+    static void TastoIndietro()
+    {
+        Console.WriteLine();
+        Console.Write("[Q] Indietro");
+        while (true)
+        {
+            char e = Console.ReadKey(true).KeyChar;
+            if (e == 'Q' || e == 'q') break;
+        }
+    }
     static void TastiConversazione()
     {
         Console.WriteLine();
@@ -163,30 +129,31 @@ class Program
     {
         while (true)
         {
+            Console.Clear();
             Console.WriteLine("MENÙ");
             Console.WriteLine("[1] Inventario");
             Console.WriteLine("[2] Statistiche");
             Console.WriteLine("[3] Quest");
             Console.WriteLine("[4] Mappa");
             Console.WriteLine("[5] Comandi");
-            Console.WriteLine("[6] Indietro");
+            Console.Write("[6] Indietro");
             char scelta = Console.ReadKey(true).KeyChar;
+            Console.Clear();
             switch (scelta)
             {
                 case '1':
                     if (personaggio.Inventario.Count == 0)
                     {
                         Console.WriteLine("L'inventario è vuoto");
-                        break;
+                        TastoIndietro();
+                        continue;
                     }
                     foreach (var oggetto in personaggio.Inventario)
                     {
                         Console.WriteLine($"{oggetto.Nome}");
                     }
-                    Console.WriteLine("Premi un tasto per tornare al menu...");
-                    Console.ReadKey(true);
-                    Console.Clear();
-                    break;
+                    TastoIndietro();
+                    continue;
                 case '2':
                     Console.WriteLine($"{personaggio.SaluteAttuale}/{personaggio.SaluteMassima} HP");
                     Console.WriteLine($"{personaggio.Attacco} ATK");
@@ -194,26 +161,23 @@ class Program
                     Console.WriteLine($"{personaggio.Velocita} VEL");
                     Console.WriteLine($"{personaggio.Esperienza} EXP");
                     Console.WriteLine($"{personaggio.Livello} Lv");
-                    break;
+                    TastoIndietro();
+                    continue;
                 case '3':
                     Console.WriteLine("DA FARE");
-                    Console.WriteLine("Premi un tasto per tornare al menu...");
-                    Console.ReadKey(true);
-                    Console.Clear();
-                    break;
+                    TastoIndietro();
+                    continue;
                 case '4':
                     Console.WriteLine("DA FARE");
-                    Console.WriteLine("Premi un tasto per tornare al menu...");
-                    Console.ReadKey(true);
-                    Console.Clear();
-                    break;
+                    TastoIndietro();
+                    continue;
                 case '5':
                     Console.WriteLine("DA FARE");
-                    Console.WriteLine("Premi un tasto per tornare al menu...");
-                    Console.ReadKey(true);
-                    Console.Clear();
-                    break;
+                    TastoIndietro();
+                    continue;
+                case '6': break;
             }
+            if(scelta == '6') break;
         }
     }
 }
