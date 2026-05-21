@@ -3,9 +3,37 @@ using GiocoV1.Servizi;
 
 class Program
 {
+    // Cancella solo la riga del prompt, non tutto lo schermo
+    // Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
+    // Non stampa il carattere scritto 
+    // char e = Console.ReadKey(true).KeyChar;
+    // Qualsiasi carattere va avanti
+    // Console.ReadKey();
+
     static void Main()
     {
         Console.Clear();
+
+        // 1) CREAZIONE MAPPA
+        var mappa = ServizioMappa.CaricaMappa("mappa_principale.json");
+
+        // scegli la sezione di spawn
+        var sezione = mappa.Sezioni.FirstOrDefault(s => s.Nome == "Foresta Tutorial");
+
+        if (sezione == null)
+        {
+            Console.WriteLine("ERRORE: La sezione 'Foresta Tutorial' non esiste nel JSON!");
+            return;
+        }
+
+
+        // crea la griglia per il movimento
+        var griglia = ServizioMappa.CreaGriglia(sezione);
+
+        // movimento come sempre
+        var movimento = new ServizioMovimento(griglia);
+
+        // 2) CREAZIONE PERSONAGGIO: Richiesta nome e cordinate di spawn
         string nome = "";
         while (true)
         {
@@ -24,10 +52,13 @@ class Program
         Console.Clear();
         var personaggio = new Personaggio
         {
-            Nome = nome
+            Nome = nome,
+            PosX = 5,
+            PosY = 5
         };
         var servizioClassi = new ServizioClassi();
 
+        // 3) SCELTA CLASSE PERSONAGGIO
         bool deciso = true;
         while (deciso)
         {
@@ -55,7 +86,7 @@ class Program
                     Console.WriteLine($"{classeSelezionata.Nome}");
                     Console.WriteLine($"Statistiche iniziali: {classeSelezionata.Salute} HP, {classeSelezionata.Attacco} ATK, {classeSelezionata.Difesa} DEF, {classeSelezionata.Velocita} VEL");
                     Console.WriteLine();
-                    Console.WriteLine("[E] Conferma  Indietro[Q]");
+                    Console.Write("[E] Conferma  Indietro[Q]");
                     char decisione = Console.ReadKey().KeyChar;
 
                     if (decisione == 'e' || decisione == 'E')
@@ -88,6 +119,42 @@ class Program
                 Console.WriteLine($"Il carattere '{sceltaClasseChar}' non è nella lista");
                 continue;
             }
+        }
+        TastoConversazione();
+
+        // 4) MOSTRA POSIZIONE INIZIALE
+        var cellaIniziale = griglia[personaggio.PosY, personaggio.PosX];
+        Console.Clear();
+        Console.WriteLine($"Benvenuto {personaggio.Nome}!");
+        Console.WriteLine($"Ti trovi nella {cellaIniziale!.Nome}. {cellaIniziale.Descrizione}");
+        Console.WriteLine();
+        Console.WriteLine("Comandi: W = su, S = giù, A = sinistra, D = destra");
+        Console.WriteLine("----------------------------------------------");
+
+        // 5) LOOP DI GIOCO
+        while (true)
+        {
+            Console.Write("Dove vuoi andare? ");
+            string direzione = Console.ReadLine() ?? "";
+            Console.Clear();
+
+            string risultato = movimento.Muovi(personaggio, direzione);
+            Console.WriteLine(risultato);
+
+            Console.WriteLine($"Posizione attuale: X={personaggio.PosX}, Y={personaggio.PosY}");
+            Console.WriteLine();
+        }
+    }
+
+    static void TastoConversazione()
+    {
+        Console.WriteLine();
+        Console.Write("[E] Avanti");
+
+        while (true)
+        {
+            char e = Console.ReadKey(true).KeyChar;
+            if (e == 'E' || e == 'e') break;
         }
     }
 }

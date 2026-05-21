@@ -38,5 +38,4 @@ namespace GiocoV1.Servizi
             return $"Ti trovi in: {cella.Nome}. {cella.Descrizione}";
         }
     }
-
 }
