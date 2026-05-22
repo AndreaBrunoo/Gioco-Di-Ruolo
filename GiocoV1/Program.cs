@@ -25,14 +25,17 @@ class Program
         var movimento = new ServizioMovimento(griglia);
 
         // 2) CREAZIONE PERSONAGGIO: Richiesta nome e cordinate di spawn
-        string nome = "";
+        string nome;
         do
         {
             Console.Write("Scrivi il nome del tuo personaggio: ");
             nome = Console.ReadLine()!.Trim();
+            if (!string.IsNullOrEmpty(nome))
+                nome = char.ToUpper(nome[0]) + nome.Substring(1).ToLower();
             Console.Clear();
         }
         while (string.IsNullOrEmpty(nome));
+
         Console.Clear();
         var personaggio = new Personaggio
         {
@@ -48,10 +51,10 @@ class Program
         {
             Console.Clear();
             Console.WriteLine();
-            Console.WriteLine($"{nome} scegli una classe:");
+            Console.WriteLine($"Benvenuto {personaggio.Nome}!"); // DA FARE
+            Console.WriteLine($"Scegli una classe:");
             for (int i = 0; i < servizioClassi.ClassiDisponibili.Count; i++)
                 Console.WriteLine($"{i + 1}) {servizioClassi.ClassiDisponibili[i].Nome}");
-
             char sceltaClasseChar = Console.ReadKey(true).KeyChar;
             if (int.TryParse(sceltaClasseChar.ToString(), out int sceltaClasseInt))
             {
@@ -70,7 +73,6 @@ class Program
                         servizioClassi.ApplicaClasse(personaggio, classeSelezionata);
                         Console.Clear();
                         Console.WriteLine($"{nome} hai scelto: {classeSelezionata.Nome}");
-                        Console.WriteLine($"Le tue statistiche iniziali sono: {personaggio.SaluteMassima} HP, {personaggio.Attacco} ATK, {personaggio.Difesa} DEF, {personaggio.Velocita} VEL");
                         deciso = false;
                         break;
                     }
@@ -84,9 +86,6 @@ class Program
 
         // 4) MOSTRA POSIZIONE INIZIALE
         var cellaIniziale = griglia[personaggio.PosY, personaggio.PosX];
-        Console.Clear();
-        Console.WriteLine($"Benvenuto {personaggio.Nome}!"); // DA FARE
-        TastiConversazione();
         Console.Clear();
         Console.WriteLine($"Ti trovi nella {cellaIniziale!.Nome}. {cellaIniziale.Descrizione}");
         Console.WriteLine("Dove vuoi andare? ");
@@ -177,7 +176,7 @@ class Program
                     continue;
                 case '6': break;
             }
-            if(scelta == '6') break;
+            if (scelta == '6') break;
         }
     }
 }
