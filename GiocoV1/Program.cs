@@ -82,7 +82,7 @@ class Program
             }
             else continue;
         }
-        TastiConversazione();
+        TastoAvanti();
 
         // 4) MOSTRA POSIZIONE INIZIALE
         var cellaIniziale = griglia[personaggio.PosY, personaggio.PosX];
@@ -114,7 +114,7 @@ class Program
             if (e == 'Q' || e == 'q') break;
         }
     }
-    static void TastiConversazione()
+    static void TastoAvanti()
     {
         Console.WriteLine();
         Console.Write("[E] Avanti");
@@ -153,15 +153,99 @@ class Program
                     }
                     TastoIndietro();
                     continue;
+
+            /* Possibile implementazione barre dinamicheò
                 case '2':
-                    Console.WriteLine($"{personaggio.SaluteAttuale}/{personaggio.SaluteMassima} HP");
-                    Console.WriteLine($"{personaggio.Attacco} ATK");
-                    Console.WriteLine($"{personaggio.Difesa} DEF");
-                    Console.WriteLine($"{personaggio.Velocita} VEL");
-                    Console.WriteLine($"{personaggio.Esperienza} EXP");
-                    Console.WriteLine($"{personaggio.Livello} Lv");
+                    int ExpPerProssimoLivello(int livello)
+                    {
+                        return livello * 100; // esempio semplice: 100, 200, 300...
+                    }
+
+                    Console.Clear();
+
+                    string nome1 = personaggio.Nome;
+                    string titolo1 = $"PERSONAGGIO: {nome1}";
+                    int larghezza1 = 30;
+
+                    string BordoTop1 = "╔" + new string('═', larghezza1) + "╗";
+                    string BordoMid1 = "╠" + new string('═', larghezza1) + "╣";
+                    string BordoBottom1 = "╚" + new string('═', larghezza1) + "╝";
+
+                    // Centra il titolo
+                    int spazi1 = (larghezza1 - titolo1.Length) / 2;
+                    string RigaTitolo1 = "║" + new string(' ', spazi1) + titolo1 + new string(' ', larghezza1 - titolo1.Length - spazi1) + "║";
+
+                    // ===== BARRE DINAMICHE =====
+
+                    string Barra(int attuale, int massimo, int lunghezza = 20)
+                    {
+                        if (massimo <= 0) massimo = 1;
+                        int filled = (int)((double)attuale / massimo * lunghezza);
+                        if (filled > lunghezza) filled = lunghezza;
+                        int empty = lunghezza - filled;
+                        return "[" + new string('█', filled) + new string('░', empty) + "]";
+                    }
+
+                    string barraHP = Barra(personaggio.SaluteAttuale, personaggio.SaluteMassima);
+
+                    // ===== CALCOLO EXP =====
+                    int expNext = ExpPerProssimoLivello(personaggio.Livello);
+                    string barraEXP = Barra(personaggio.Esperienza, expNext);
+
+                    // ===== STAMPA BOX =====
+
+                    Console.WriteLine(BordoTop1);
+                    Console.WriteLine(RigaTitolo1);
+                    Console.WriteLine(BordoMid1);
+
+                    Console.WriteLine($"║ ❤️  HP:   {barraHP} {personaggio.SaluteAttuale}/{personaggio.SaluteMassima}".PadRight(larghezza1 + 1) + "║");
+                    Console.WriteLine($"║ ⭐ EXP:  {barraEXP} {personaggio.Esperienza}".PadRight(larghezza1 + 1) + "║");
+
+                    Console.WriteLine($"║ 🗡️  Attacco:    {personaggio.Attacco}".PadRight(larghezza1 + 1) + "║");
+                    Console.WriteLine($"║ 🛡️  Difesa:     {personaggio.Difesa}".PadRight(larghezza1 + 1) + "║");
+                    Console.WriteLine($"║ ⚡ Velocità:    {personaggio.Velocita}".PadRight(larghezza1 + 1) + "║");
+                    Console.WriteLine($"║ ⬆️ Livello:     {personaggio.Livello}".PadRight(larghezza1 + 1) + "║");
+                    Console.WriteLine($"║ 💰 Monete:      {personaggio.Monete}".PadRight(larghezza1 + 1) + "║");
+                    Console.WriteLine($"║ 🎒 Inventario:  {personaggio.Inventario.Count}/{personaggio.CapacitaInventario}".PadRight(larghezza1 + 1) + "║");
+                    Console.WriteLine($"║ 📍 Posizione:   ({personaggio.PosX}, {personaggio.PosY})".PadRight(larghezza1 + 1) + "║");
+
+                    Console.WriteLine(BordoBottom1);
+
                     TastoIndietro();
                     continue;
+*/
+                case '2':
+                    Console.Clear();
+
+                    string nome = personaggio.Nome;
+                    string titolo = $"PERSONAGGIO: {nome}";
+                    int larghezza = 30; // larghezza interna del box
+
+                    string BordoTop = "╔" + new string('═', larghezza) + "╗";
+                    string BordoMid = "╠" + new string('═', larghezza) + "╣";
+                    string BordoBottom = "╚" + new string('═', larghezza) + "╝";
+
+                    // Centra il titolo
+                    int spazi = (larghezza - titolo.Length) / 2;
+                    string RigaTitolo = "║" + new string(' ', spazi) + titolo + new string(' ', larghezza - titolo.Length - spazi) + "║";
+
+                    Console.WriteLine(BordoTop);
+                    Console.WriteLine(RigaTitolo);
+                    Console.WriteLine(BordoMid);
+
+                    Console.WriteLine($"║ ❤️  Salute:     {personaggio.SaluteAttuale}/{personaggio.SaluteMassima}".PadRight(larghezza + 1) + "║");
+                    Console.WriteLine($"║ 🗡️  Attacco:    {personaggio.Attacco}".PadRight(larghezza + 1) + "║");
+                    Console.WriteLine($"║ 🛡️  Difesa:     {personaggio.Difesa}".PadRight(larghezza + 1) + "║");
+                    Console.WriteLine($"║ ⚡ Velocità:    {personaggio.Velocita}".PadRight(larghezza + 1) + "║");
+                    Console.WriteLine($"║ ⭐ Esperienza:  {personaggio.Esperienza}".PadRight(larghezza + 1) + "║");
+                    Console.WriteLine($"║ ⬆️  Livello:     {personaggio.Livello}".PadRight(larghezza + 1) + "║");
+                    Console.WriteLine($"║ 💰 Monete:      {personaggio.Monete}".PadRight(larghezza + 1) + "║");
+                    Console.WriteLine($"║ 🎒 Inventario:  {personaggio.Inventario.Count}/{personaggio.CapacitaInventario}".PadRight(larghezza + 1) + "║");
+                    Console.WriteLine($"║ 📍 Posizione:   ({personaggio.PosX}, {personaggio.PosY})".PadRight(larghezza + 1) + "║");
+                    Console.WriteLine(BordoBottom);
+                    TastoIndietro();
+                    continue;
+
                 case '3':
                     Console.WriteLine("DA FARE");
                     TastoIndietro();
