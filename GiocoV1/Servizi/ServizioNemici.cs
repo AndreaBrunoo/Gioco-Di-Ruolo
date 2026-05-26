@@ -108,6 +108,5 @@ namespace GiocoV1.Servizi
                 Inventario = new List<Oggetto>(boss.Inventario)
             };
         }
-
     }
 }

@@ -1,7 +1,6 @@
 using GiocoV1.Modelli;
 
 namespace GiocoV1.Configurazioni;
-
 public class CellaBoss
 {
     public int X { get; set; }

@@ -1,6 +1,7 @@
 ﻿using GiocoV1.Modelli;
 using GiocoV1.Servizi;
 using GiocoV1.Configurazioni;
+using GiocoV1.Dtos;
 
 class Program
 {
@@ -256,13 +257,15 @@ class Program
             if (direzione == 'r' || direzione == 'R')
             {
                 bool continua = Menu(personaggio, stato);
-                if (!continua)
-                    return;
+                if (!continua) return;
             }
-            string risultato = movimento.Muovi(personaggio, direzione, sezione, configNemici);
-            Console.WriteLine(risultato);
-            Console.WriteLine($"Posizione attuale: X={personaggio.PosX}, Y={personaggio.PosY}");
+            var risultato = movimento.Muovi(personaggio, direzione, sezione, configNemici);
+            Console.WriteLine(risultato.Messaggio);
             Console.WriteLine();
+            if (risultato.NemicoTrovato != null)
+            {
+                ServizioIncontri.Incontro(personaggio, risultato.NemicoTrovato);  
+            }
         }
     }
 
@@ -368,8 +371,7 @@ class Program
         Console.WriteLine($"{"║",-2}{"Esperienza",-18}{personaggio.Esperienza,-11}║");
         Console.WriteLine($"{"║",-2}{"Livello",-18}{personaggio.Livello,-11}║");
         Console.WriteLine($"{"║",-2}{"Monete",-18}{personaggio.Monete,-11}║");
-        string inventario = $"{personaggio.Inventario.Count}/{personaggio.CapacitaInventario}";
-        Console.WriteLine($"{"║",-2}{"Inventario",-18}{inventario,-11}║");
+        // Console.WriteLine($"{"║",-2}{"Arma",-18}{Equipaggiamento.Arma.TipologiaArma,-11}║");
 
         Console.WriteLine(BordoBottom);
         TastoIndietro();
