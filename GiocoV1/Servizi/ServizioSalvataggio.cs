@@ -1,5 +1,7 @@
 using System.Text.Json;
 using GiocoV1.Modelli;
+using GiocoV1.Configurazioni;
+
 namespace GiocoV1.Servizi;
 public class ServizioSalvataggio
 {
@@ -18,15 +20,14 @@ public class ServizioSalvataggio
     private string GeneraNomeFile()
     {
         var files = Directory.GetFiles(ConfigSalvataggi.CartellaSalvataggi, $"{ConfigSalvataggi.Prefisso}*{ConfigSalvataggi.Estensione}");
-
         int max = 0;
 
         foreach (var file in files)
         {
             var nome = Path.GetFileNameWithoutExtension(file);
-            var numeroStr = nome.Replace(ConfigSalvataggi.Prefisso, "");
+            var numeroString = nome.Replace(ConfigSalvataggi.Prefisso, "");
 
-            if (int.TryParse(numeroStr, out int numero))
+            if (int.TryParse(numeroString, out int numero))
                 if (numero > max)
                     max = numero;
         }

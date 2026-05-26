@@ -1,9 +1,10 @@
 ﻿using GiocoV1.Modelli;
 using GiocoV1.Servizi;
+using GiocoV1.Configurazioni;
+
 class Program
 {
     // Cose da fare
-    // Comandi nello switch
     // Le frasi di benvenuto
 
     // Cancella solo la riga del prompt, non tutto lo schermo
@@ -12,19 +13,65 @@ class Program
     // char e = Console.ReadKey(true).KeyChar;
     // Qualsiasi carattere va avanti
     // Console.ReadKey();
+
     static void Main()
     {
+        while (true)
+        {
+            var servizioSalvataggio = new ServizioSalvataggio();
+            StatoGioco? stato = null;
+
+            // ============================
+            //       MENU INIZIALE
+            // ============================
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("=== MENU INIZIALE ===");
+                Console.WriteLine("[1] Nuova Partita");
+                Console.WriteLine("[2] Carica Partita");
+                Console.Write("[3] Chiudi");
+
+                char scelta = Console.ReadKey(true).KeyChar;
+                Console.Clear();
+
+                if (scelta == '1')
+                {
+                    Console.Clear();
+                    Console.Write("Iniziare nuova partita? ");
+                    bool decisioneInizio = TastiSiENo();
+                    if (decisioneInizio)
+                    {
+                        stato = NuovaPartita();
+                        break;
+                    }
+                    else continue;
+                }
+                else if (scelta == '2')
+                {
+                    stato = MenuCaricamento(servizioSalvataggio);
+                    if (stato != null) break;
+                }
+                else if (scelta == '3') return;
+            }
+            AvviaGioco(stato);
+        }
+    }
+
+    // ============================
+    //       NUOVA PARTITA
+    // ============================
+    static StatoGioco NuovaPartita()
+    {
         Console.Clear();
+
         // 1) CREAZIONE MAPPA
         var mappa = ServizioMappa.CaricaMappa("Mappa_principale.json");
-        // scegli la sezione di spawn
         var sezione = mappa.Sezioni.FirstOrDefault(s => s.Nome == "Foresta Tutorial") ?? mappa.Sezioni.First();
-        // crea la griglia per il movimento
         var griglia = ServizioMappa.CreaGriglia(sezione);
-        // movimento come sempre
         var movimento = new ServizioMovimento(griglia);
 
-        // 2) CREAZIONE PERSONAGGIO: Richiesta nome e cordinate di spawn
+        // 2) CREAZIONE PERSONAGGIO
         string nome;
         do
         {
@@ -36,38 +83,45 @@ class Program
         }
         while (string.IsNullOrEmpty(nome));
 
-        Console.Clear();
         var personaggio = new Personaggio
         {
             Nome = nome,
             PosX = 5,
             PosY = 5
         };
+
+        SchermataBenvenuto(personaggio);
         var servizioClassi = new ServizioClassi();
 
-        // 3) SCELTA CLASSE PERSONAGGIO
+        // 3) SCELTA CLASSE
         bool deciso = true;
         while (deciso)
         {
             Console.Clear();
-            Console.WriteLine();
-            Console.WriteLine($"Benvenuto {personaggio.Nome}!"); // DA FARE
-            Console.WriteLine($"Scegli una classe:");
+            Console.WriteLine("Scegli una classe:");
+
             for (int i = 0; i < servizioClassi.ClassiDisponibili.Count; i++)
                 Console.WriteLine($"{i + 1}) {servizioClassi.ClassiDisponibili[i].Nome}");
+
             char sceltaClasseChar = Console.ReadKey(true).KeyChar;
+
             if (int.TryParse(sceltaClasseChar.ToString(), out int sceltaClasseInt))
             {
-                if (sceltaClasseInt < 1 || sceltaClasseInt > servizioClassi.ClassiDisponibili.Count) continue;
+                if (sceltaClasseInt < 1 || sceltaClasseInt > servizioClassi.ClassiDisponibili.Count)
+                    continue;
+
                 while (true)
                 {
                     Console.Clear();
                     var classeSelezionata = servizioClassi.ClassiDisponibili[sceltaClasseInt - 1];
+
                     Console.WriteLine($"{classeSelezionata.Nome}");
                     Console.WriteLine($"Statistiche iniziali: {classeSelezionata.Salute} HP, {classeSelezionata.Attacco} ATK, {classeSelezionata.Difesa} DEF, {classeSelezionata.Velocita} VEL");
                     Console.WriteLine();
-                    Console.Write("[E] Conferma  Indietro[Q]");
+                    Console.Write("[E] Conferma  [Q] Indietro");
+
                     char decisione = Console.ReadKey(true).KeyChar;
+
                     if (decisione == 'e' || decisione == 'E')
                     {
                         servizioClassi.ApplicaClasse(personaggio, classeSelezionata);
@@ -76,32 +130,265 @@ class Program
                         deciso = false;
                         break;
                     }
-                    else if (decisione == 'q' || decisione == 'Q') break;
-                    else continue;
+                    else if (decisione == 'q' || decisione == 'Q')
+                        break;
                 }
             }
-            else continue;
         }
         TastoAvanti();
 
-        // 4) MOSTRA POSIZIONE INIZIALE
+        // CREA LO STATO DI GIOCO
+        return new StatoGioco
+        {
+            Personaggio = personaggio,
+            AreaCorrente = sezione.Nome,
+            PosizioneX = personaggio.PosX,
+            PosizioneY = personaggio.PosY
+        };
+    }
+
+    static void SchermataBenvenuto(Personaggio personaggio)
+    {
+        Console.Clear();
+
+        string titolo = "PROJECT FRONTIER";
+        int larghezza = 50;
+
+        string bordoTop = "╔" + new string('═', larghezza) + "╗";
+        string bordoMid = "╠" + new string('═', larghezza) + "╣";
+        string bordoBottom = "╚" + new string('═', larghezza) + "╝";
+
+        // Centra il titolo
+        int spazi = (larghezza - titolo.Length) / 2;
+        string rigaTitolo = "║" + new string(' ', spazi) + titolo + new string(' ', larghezza - titolo.Length - spazi) + "║";
+
+        Console.WriteLine(bordoTop);
+        Console.WriteLine(rigaTitolo);
+        Console.WriteLine(bordoMid);
+
+        Console.WriteLine($"║ Benvenuto, {personaggio.Nome}!".PadRight(larghezza + 1) + "║");
+        Console.WriteLine($"║ Il tuo viaggio sta per iniziare...".PadRight(larghezza + 1) + "║");
+        Console.WriteLine($"║".PadRight(larghezza + 1) + "║");
+        Console.WriteLine($"║ • Esplora terre misteriose".PadRight(larghezza + 1) + "║");
+        Console.WriteLine($"║ • Affronta creature sconosciute".PadRight(larghezza + 1) + "║");
+        Console.WriteLine($"║ • Cresci, combatti, sopravvivi".PadRight(larghezza + 1) + "║");
+        Console.WriteLine($"║".PadRight(larghezza + 1) + "║");
+        Console.WriteLine($"║ Preparati, avventuriero...".PadRight(larghezza + 1) + "║");
+
+        Console.WriteLine(bordoBottom);
+
+        Console.WriteLine();
+        Console.Write("[E] Continua");
+
+        while (true)
+        {
+            char c = Console.ReadKey(true).KeyChar;
+            if (c == 'E' || c == 'e') break;
+        }
+    }
+
+    // ============================
+    //       CARICAMENTO PARTITA
+    // ============================
+    static StatoGioco MenuCaricamento(ServizioSalvataggio salvataggio)
+    {
+        var files = salvataggio.ElencaSalvataggi();
+
+        if (files.Count == 0)
+        {
+            Console.WriteLine("Nessun salvataggio trovato.");
+            TastoIndietro();
+            return null;
+        }
+
+        Console.WriteLine("=== SCEGLI UN SALVATAGGIO ===");
+
+        for (int i = 0; i < files.Count; i++)
+            Console.WriteLine($"[{i + 1}] {Path.GetFileName(files[i])}");
+
+        Console.WriteLine("[Q] Indietro");
+
+        while (true)
+        {
+            char scelta = Console.ReadKey(true).KeyChar;
+
+            if (scelta == 'q' || scelta == 'Q')
+                return null;
+
+            if (int.TryParse(scelta.ToString(), out int fileScelto))
+            {
+                if (fileScelto >= 1 && fileScelto <= files.Count)
+                {
+                    Console.Clear();
+                    return salvataggio.Carica(files[fileScelto - 1]);
+                }
+            }
+        }
+    }
+
+    // ============================
+    //       AVVIO DEL GIOCO
+    // ============================
+    static void AvviaGioco(StatoGioco stato)
+    {
+        var personaggio = stato.Personaggio;
+        // 🔹 Ricarico la mappa dal file
+        var mappa = ServizioMappa.CaricaMappa("Mappa_principale.json");
+        // 🔹 Carico la configurazione dei nemici
+        var configNemici = ServizioNemici.CaricaNemici("Nemici.json");
+        // 🔹 Trovo la sezione corretta
+        var sezione = mappa.Sezioni.First(s => s.Nome == stato.AreaCorrente);
+        // 🔹 Creo la griglia per il movimento
+        var griglia = ServizioMappa.CreaGriglia(sezione);
+        var movimento = new ServizioMovimento(griglia);
+        // 🔹 Posizione iniziale
         var cellaIniziale = griglia[personaggio.PosY, personaggio.PosX];
+
         Console.Clear();
         Console.WriteLine($"Ti trovi nella {cellaIniziale!.Nome}. {cellaIniziale.Descrizione}");
-        Console.WriteLine("Dove vuoi andare? ");
         Console.WriteLine();
 
-        // 5) LOOP DI GIOCO
         while (true)
         {
             Console.Write("[R] Menù  [W] Su  [S] Giù  [A] Sinistra  [D] Destra");
             char direzione = Console.ReadKey(true).KeyChar;
             Console.Clear();
-            if (direzione == 'r' || direzione == 'R') Menu(personaggio);
-            string risultato = movimento.Muovi(personaggio, direzione);
+            if (direzione == 'r' || direzione == 'R')
+            {
+                bool continua = Menu(personaggio, stato);
+                if (!continua)
+                    return;
+            }
+            string risultato = movimento.Muovi(personaggio, direzione, sezione, configNemici);
             Console.WriteLine(risultato);
             Console.WriteLine($"Posizione attuale: X={personaggio.PosX}, Y={personaggio.PosY}");
             Console.WriteLine();
+        }
+    }
+
+    // ============================
+    //       MENU DI GIOCO
+    // ============================
+    static bool Menu(Personaggio personaggio, StatoGioco stato)
+    {
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("MENÙ");
+            Console.WriteLine("[1] Inventario");
+            Console.WriteLine("[2] Statistiche");
+            Console.WriteLine("[3] Mosse");
+            Console.WriteLine("[4] Mappa");
+            Console.WriteLine("[5] Quest");
+            Console.WriteLine("[6] Salva");
+            Console.WriteLine("[7] Indietro");
+            Console.Write("[8] Esci");
+
+            char scelta = Console.ReadKey(true).KeyChar;
+            Console.Clear();
+
+            switch (scelta)
+            {
+                case '1':
+                    if (personaggio.Inventario.Count == 0)
+                    {
+                        Console.WriteLine("L'inventario è vuoto");
+                        TastoIndietro();
+                        continue;
+                    }
+                    foreach (var oggetto in personaggio.Inventario)
+                    {
+                        Console.WriteLine($"{oggetto.Quantita}X {oggetto.Nome}");
+                        Console.Write($"ATK +{oggetto.BonusAttacco} ");
+                        Console.Write($"DIF +{oggetto.BonusDifesa} ");
+                        Console.Write($"VEL +{oggetto.BonusVelocita} ");
+                        Console.Write($"HP +{oggetto.BonusSalute}");
+                    }
+                    TastoIndietro();
+                    continue;
+                case '2':
+                    MostraStatistiche(personaggio);
+                    continue;
+                case '3':
+                    if (personaggio.Mosse.Count == 0)
+                    {
+                        Console.WriteLine("Non hai mosse disponibili");
+                        TastoIndietro();
+                        continue;
+                    }
+                    foreach (var mossa in personaggio.Mosse)
+                    {
+                        Console.WriteLine($"{mossa.Nome}");
+                        Console.Write($"Potenza: {mossa.PotenzaBase} ");
+                        Console.Write($"Precisione: {mossa.PrecisioneBase} ");
+                        Console.Write($"Prob. Crit.: {mossa.ProbabilitaCritico} ");
+                    }
+                    TastoIndietro();
+                    continue;
+                case '4':
+                case '5':
+                    Console.WriteLine("DA FARE");
+                    TastoIndietro();
+                    continue;
+                case '6':
+                    var servizioSalvataggio = new ServizioSalvataggio();
+                    string percorso = servizioSalvataggio.SalvaNuovoSlot(stato);
+                    Console.WriteLine("Partita salvata con successo!");
+                    Console.WriteLine($"File: {Path.GetFileName(percorso)}");
+                    Console.WriteLine($"Salvato il: {DateTime.Now:dd/MM/yyyy HH:mm}");
+                    TastoIndietro();
+                    continue;
+                case '7': return true;
+                case '8': return false;
+            }
+        }
+    }
+
+    static void MostraStatistiche(Personaggio personaggio)
+    {
+        int larghezza = 30;
+        string titolo = $"PERSONAGGIO: {personaggio.Nome}";
+
+        string BordoTop = "╔" + new string('═', larghezza) + "╗";
+        string BordoMid = "╠" + new string('═', larghezza) + "╣";
+        string BordoBottom = "╚" + new string('═', larghezza) + "╝";
+
+        int spazi = (larghezza - titolo.Length) / 2;
+        string RigaTitolo = "║" + new string(' ', spazi) + titolo + new string(' ', larghezza - titolo.Length - spazi) + "║";
+
+        Console.WriteLine(BordoTop);
+        Console.WriteLine(RigaTitolo);
+        Console.WriteLine(BordoMid);
+
+        string salute = $"{personaggio.SaluteAttuale}/{personaggio.SaluteMassima}";
+        Console.WriteLine($"{"║",-2}{"Salute",-18}{salute,-11}║");
+        Console.WriteLine($"{"║",-2}{"Attacco",-18}{personaggio.Attacco,-11}║");
+        Console.WriteLine($"{"║",-2}{"Difesa",-18}{personaggio.Difesa,-11}║");
+        Console.WriteLine($"{"║",-2}{"Velocità",-18}{personaggio.Velocita,-11}║");
+        Console.WriteLine($"{"║",-2}{"Esperienza",-18}{personaggio.Esperienza,-11}║");
+        Console.WriteLine($"{"║",-2}{"Livello",-18}{personaggio.Livello,-11}║");
+        Console.WriteLine($"{"║",-2}{"Monete",-18}{personaggio.Monete,-11}║");
+        string inventario = $"{personaggio.Inventario.Count}/{personaggio.CapacitaInventario}";
+        Console.WriteLine($"{"║",-2}{"Inventario",-18}{inventario,-11}║");
+
+        Console.WriteLine(BordoBottom);
+        TastoIndietro();
+    }
+
+    // ============================
+    //       UTILITY
+    // ============================
+    static bool TastiSiENo()
+    {
+        Console.WriteLine();
+        Console.Write("[E] Si  [Q] No");
+        while (true)
+        {
+            char t = Console.ReadKey(true).KeyChar;
+            if (t == 'E' || t == 'e')
+                return true;  // avanti
+            if (t == 'Q' || t == 'q')
+                return false; // indietro
         }
     }
     static void TastoIndietro()
@@ -122,145 +409,6 @@ class Program
         {
             char e = Console.ReadKey(true).KeyChar;
             if (e == 'E' || e == 'e') break;
-        }
-    }
-    static void Menu(Personaggio personaggio)
-    {
-        while (true)
-        {
-            Console.Clear();
-            Console.WriteLine("MENÙ");
-            Console.WriteLine("[1] Inventario");
-            Console.WriteLine("[2] Statistiche");
-            Console.WriteLine("[3] Quest");
-            Console.WriteLine("[4] Mappa");
-            Console.WriteLine("[5] Comandi");
-            Console.Write("[6] Indietro");
-            char scelta = Console.ReadKey(true).KeyChar;
-            Console.Clear();
-            switch (scelta)
-            {
-                case '1':
-                    if (personaggio.Inventario.Count == 0)
-                    {
-                        Console.WriteLine("L'inventario è vuoto");
-                        TastoIndietro();
-                        continue;
-                    }
-                    foreach (var oggetto in personaggio.Inventario)
-                    {
-                        Console.WriteLine($"{oggetto.Nome}");
-                    }
-                    TastoIndietro();
-                    continue;
-
-            /* Possibile implementazione barre dinamicheò
-                case '2':
-                    int ExpPerProssimoLivello(int livello)
-                    {
-                        return livello * 100; // esempio semplice: 100, 200, 300...
-                    }
-
-                    Console.Clear();
-
-                    string nome1 = personaggio.Nome;
-                    string titolo1 = $"PERSONAGGIO: {nome1}";
-                    int larghezza1 = 30;
-
-                    string BordoTop1 = "╔" + new string('═', larghezza1) + "╗";
-                    string BordoMid1 = "╠" + new string('═', larghezza1) + "╣";
-                    string BordoBottom1 = "╚" + new string('═', larghezza1) + "╝";
-
-                    // Centra il titolo
-                    int spazi1 = (larghezza1 - titolo1.Length) / 2;
-                    string RigaTitolo1 = "║" + new string(' ', spazi1) + titolo1 + new string(' ', larghezza1 - titolo1.Length - spazi1) + "║";
-
-                    // ===== BARRE DINAMICHE =====
-
-                    string Barra(int attuale, int massimo, int lunghezza = 20)
-                    {
-                        if (massimo <= 0) massimo = 1;
-                        int filled = (int)((double)attuale / massimo * lunghezza);
-                        if (filled > lunghezza) filled = lunghezza;
-                        int empty = lunghezza - filled;
-                        return "[" + new string('█', filled) + new string('░', empty) + "]";
-                    }
-
-                    string barraHP = Barra(personaggio.SaluteAttuale, personaggio.SaluteMassima);
-
-                    // ===== CALCOLO EXP =====
-                    int expNext = ExpPerProssimoLivello(personaggio.Livello);
-                    string barraEXP = Barra(personaggio.Esperienza, expNext);
-
-                    // ===== STAMPA BOX =====
-
-                    Console.WriteLine(BordoTop1);
-                    Console.WriteLine(RigaTitolo1);
-                    Console.WriteLine(BordoMid1);
-
-                    Console.WriteLine($"║ ❤️  HP:   {barraHP} {personaggio.SaluteAttuale}/{personaggio.SaluteMassima}".PadRight(larghezza1 + 1) + "║");
-                    Console.WriteLine($"║ ⭐ EXP:  {barraEXP} {personaggio.Esperienza}".PadRight(larghezza1 + 1) + "║");
-
-                    Console.WriteLine($"║ 🗡️  Attacco:    {personaggio.Attacco}".PadRight(larghezza1 + 1) + "║");
-                    Console.WriteLine($"║ 🛡️  Difesa:     {personaggio.Difesa}".PadRight(larghezza1 + 1) + "║");
-                    Console.WriteLine($"║ ⚡ Velocità:    {personaggio.Velocita}".PadRight(larghezza1 + 1) + "║");
-                    Console.WriteLine($"║ ⬆️ Livello:     {personaggio.Livello}".PadRight(larghezza1 + 1) + "║");
-                    Console.WriteLine($"║ 💰 Monete:      {personaggio.Monete}".PadRight(larghezza1 + 1) + "║");
-                    Console.WriteLine($"║ 🎒 Inventario:  {personaggio.Inventario.Count}/{personaggio.CapacitaInventario}".PadRight(larghezza1 + 1) + "║");
-                    Console.WriteLine($"║ 📍 Posizione:   ({personaggio.PosX}, {personaggio.PosY})".PadRight(larghezza1 + 1) + "║");
-
-                    Console.WriteLine(BordoBottom1);
-
-                    TastoIndietro();
-                    continue;
-*/
-                case '2':
-                    Console.Clear();
-
-                    string nome = personaggio.Nome;
-                    string titolo = $"PERSONAGGIO: {nome}";
-                    int larghezza = 30; // larghezza interna del box
-
-                    string BordoTop = "╔" + new string('═', larghezza) + "╗";
-                    string BordoMid = "╠" + new string('═', larghezza) + "╣";
-                    string BordoBottom = "╚" + new string('═', larghezza) + "╝";
-
-                    // Centra il titolo
-                    int spazi = (larghezza - titolo.Length) / 2;
-                    string RigaTitolo = "║" + new string(' ', spazi) + titolo + new string(' ', larghezza - titolo.Length - spazi) + "║";
-
-                    Console.WriteLine(BordoTop);
-                    Console.WriteLine(RigaTitolo);
-                    Console.WriteLine(BordoMid);
-
-                    Console.WriteLine($"║ ❤️  Salute:     {personaggio.SaluteAttuale}/{personaggio.SaluteMassima}".PadRight(larghezza + 1) + "║");
-                    Console.WriteLine($"║ 🗡️  Attacco:    {personaggio.Attacco}".PadRight(larghezza + 1) + "║");
-                    Console.WriteLine($"║ 🛡️  Difesa:     {personaggio.Difesa}".PadRight(larghezza + 1) + "║");
-                    Console.WriteLine($"║ ⚡ Velocità:    {personaggio.Velocita}".PadRight(larghezza + 1) + "║");
-                    Console.WriteLine($"║ ⭐ Esperienza:  {personaggio.Esperienza}".PadRight(larghezza + 1) + "║");
-                    Console.WriteLine($"║ ⬆️  Livello:     {personaggio.Livello}".PadRight(larghezza + 1) + "║");
-                    Console.WriteLine($"║ 💰 Monete:      {personaggio.Monete}".PadRight(larghezza + 1) + "║");
-                    Console.WriteLine($"║ 🎒 Inventario:  {personaggio.Inventario.Count}/{personaggio.CapacitaInventario}".PadRight(larghezza + 1) + "║");
-                    Console.WriteLine($"║ 📍 Posizione:   ({personaggio.PosX}, {personaggio.PosY})".PadRight(larghezza + 1) + "║");
-                    Console.WriteLine(BordoBottom);
-                    TastoIndietro();
-                    continue;
-
-                case '3':
-                    Console.WriteLine("DA FARE");
-                    TastoIndietro();
-                    continue;
-                case '4':
-                    Console.WriteLine("DA FARE");
-                    TastoIndietro();
-                    continue;
-                case '5':
-                    Console.WriteLine("DA FARE");
-                    TastoIndietro();
-                    continue;
-                case '6': break;
-            }
-            if (scelta == '6') break;
         }
     }
 }

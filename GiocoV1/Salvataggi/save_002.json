@@ -1,0 +1,28 @@
+{
+  "VersioneGioco": "1.0.0",
+  "Timestamp": "2026-05-25T21:31:41.9025503+02:00",
+  "Personaggio": {
+    "Id": 0,
+    "Nome": "Abdullha",
+    "SaluteMassima": 120,
+    "SaluteAttuale": 120,
+    "Attacco": 15,
+    "Difesa": 10,
+    "Velocita": 5,
+    "Livello": 1,
+    "Esperienza": 0,
+    "Mosse": [],
+    "Inventario": [],
+    "CapacitaInventario": 10,
+    "Monete": 0,
+    "PosX": 5,
+    "PosY": 4
+  },
+  "AreaCorrente": "Foresta Tutorial",
+  "PosizioneX": 5,
+  "PosizioneY": 5,
+  "BossSconfitti": [],
+  "OggettiRaccolti": [],
+  "NemiciEliminati": [],
+  "EventiCompletati": []
+}

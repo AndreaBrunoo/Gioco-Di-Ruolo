@@ -1,4 +1,5 @@
 using GiocoV1.Modelli;
+using GiocoV1.Configurazioni;
 
 namespace GiocoV1.Servizi
 {
@@ -11,7 +12,34 @@ namespace GiocoV1.Servizi
             _griglia = griglia;
         }
 
-        public string Muovi(Personaggio personaggio, char direzione)
+        /* public string Muovi(Personaggio personaggio, char direzione)
+         {
+             int nuovoX = personaggio.PosX;
+             int nuovoY = personaggio.PosY;
+
+             if (direzione == 'w' || direzione == 'W') nuovoY--;
+             if (direzione == 's' || direzione == 'S') nuovoY++;
+             if (direzione == 'd' || direzione == 'D') nuovoX++;
+             if (direzione == 'a' || direzione == 'A') nuovoX--;
+
+             // Controllo limiti
+             if (nuovoX < 0 || nuovoX >= _griglia.GetLength(1) ||
+                 nuovoY < 0 || nuovoY >= _griglia.GetLength(0))
+                 return "Non puoi andare fuori dalla mappa.";
+
+             // Controllo cella vuota
+             if (_griglia[nuovoY, nuovoX] == null)
+                 return "Non puoi andare lì, non c'è nulla.";
+
+             // Movimento valido
+             personaggio.PosX = nuovoX;
+             personaggio.PosY = nuovoY;
+
+             var cella = _griglia[nuovoY, nuovoX]!;
+             return $"Ti trovi in: {cella.Nome}. {cella.Descrizione}";
+         }*/
+
+        public string Muovi(Personaggio personaggio, char direzione, Sezione sezione, ConfigNemici configNemici)
         {
             int nuovoX = personaggio.PosX;
             int nuovoY = personaggio.PosY;
@@ -35,6 +63,29 @@ namespace GiocoV1.Servizi
             personaggio.PosY = nuovoY;
 
             var cella = _griglia[nuovoY, nuovoX]!;
+
+            var cellaPosizionata = new CellaPosizionata
+            {
+                X = nuovoX,
+                Y = nuovoY,
+                Nome = cella.Nome,
+                Descrizione = cella.Descrizione
+            };
+
+            // ⭐ TENTA LO SPAWN ⭐
+            var entita = ServizioNemici.TentaSpawnNemico(sezione, cellaPosizionata, configNemici);
+
+            if (entita is Boss boss)
+            {
+                return $"⚠️ Il boss {boss.Nome} appare!";
+            }
+
+            if (entita is Nemico nemico)
+            {
+                return $"Un {nemico.Nome} appare!";
+            }
+
+            // Nessun nemico → descrizione della cella
             return $"Ti trovi in: {cella.Nome}. {cella.Descrizione}";
         }
     }

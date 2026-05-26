@@ -1,0 +1,43 @@
+{
+  "Foresta Tutorial": {
+    "ProbabilitaSpawn": 40,
+    "CelleBoss": [ { "x": 8, "y": 8 } ],
+    "Nemici": [
+      {
+        "Nome": "Lupo",
+        "Probabilita": 50,
+        "Salute": 20,
+        "Attacco": 5,
+        "Difesa": 2,
+        "Velocita": 3,
+        "Livello": 1
+      },
+      {
+        "Nome": "Goblin",
+        "Probabilita": 30,
+        "Salute": 15,
+        "Attacco": 4,
+        "Difesa": 1,
+        "Velocita": 4,
+        "Livello": 1
+      },
+      {
+        "Nome": "Ragno Gigante",
+        "Probabilita": 20,
+        "Salute": 25,
+        "Attacco": 6,
+        "Difesa": 3,
+        "Velocita": 2,
+        "Livello": 2
+      }
+    ],
+    "Boss": {
+      "Nome": "Re dei Lupi",
+      "Salute": 100,
+      "Attacco": 12,
+      "Difesa": 5,
+      "Velocita": 4,
+      "Livello": 5
+    }
+  }
+}
