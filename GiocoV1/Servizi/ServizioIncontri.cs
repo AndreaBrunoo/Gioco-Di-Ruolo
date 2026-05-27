@@ -15,6 +15,7 @@ public static class ServizioIncontri
                 {
                     var mossa = personaggio.Equipaggiamenti.MosseEquipaggiate[i];
                     Console.WriteLine($"[{i + 1}]{(mossa?.Nome ?? "---")}");
+                    char sceltaMossa = Console.ReadKey(true).KeyChar;
                 }
             }
         }
