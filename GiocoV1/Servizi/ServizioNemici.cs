@@ -81,7 +81,8 @@ namespace GiocoV1.Servizi
             return new Nemico
             {
                 Nome = nemico.Nome,
-                Salute = nemico.Salute,
+                SaluteMassima = nemico.SaluteMassima,
+                SaluteAttuale = nemico.SaluteMassima,
                 Attacco = nemico.Attacco,
                 Difesa = nemico.Difesa,
                 Velocita = nemico.Velocita,

@@ -7,7 +7,7 @@
         {
           "Nome": "Lupo",
           "ProbabilitaSpawn": 50,
-          "Salute": 20,
+          "SaluteMassima": 20,
           "Attacco": 5,
           "Difesa": 2,
           "Velocita": 3,
@@ -16,7 +16,7 @@
         {
           "Nome": "Goblin",
           "ProbabilitaSpawn": 30,
-          "Salute": 15,
+          "SaluteMassima": 15,
           "Attacco": 4,
           "Difesa": 1,
           "Velocita": 4,
@@ -25,7 +25,7 @@
         {
           "Nome": "Ragno Gigante",
           "ProbabilitaSpawn": 20,
-          "Salute": 25,
+          "SaluteMassima": 25,
           "Attacco": 6,
           "Difesa": 3,
           "Velocita": 2,
@@ -34,7 +34,7 @@
       ],
       "Boss": {
         "Nome": "Re dei Lupi",
-        "Salute": 100,
+        "SaluteMassima": 100,
         "Attacco": 12,
         "Difesa": 5,
         "Velocita": 4,

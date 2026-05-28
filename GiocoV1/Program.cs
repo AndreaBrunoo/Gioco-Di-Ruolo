@@ -6,14 +6,17 @@ using GiocoV1.Dtos;
 class Program
 {
     // Cose da fare
-    // Le frasi di benvenuto
 
+    // FARE IL SERVIZIO INCONTRO BOSS
+    // IMPOSTARE UNA MOSSA STANDARD APPENA IL GIOCATORE ENTRA
+    // AGGIUNGERE L'OPZIONE INVENTARIO DURANTE IL COMBATTIMENTO
+    // AGGIUNGERE OGGETTI OFFENSIVI TIPO (COLTELLO DA LANCIO O SHURIKEN...)
+    // AGGIUNGERE UN JSON PER LE MOSSE E GLI OGGETTI METTERNE UN PAIO E TESTARE
+    
+    // Appunti
+    
     // Cancella solo la riga del prompt, non tutto lo schermo
     // Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
-    // Non stampa il carattere scritto 
-    // char e = Console.ReadKey(true).KeyChar;
-    // Qualsiasi carattere va avanti
-    // Console.ReadKey();
 
     static void Main()
     {
@@ -403,7 +406,7 @@ class Program
             if (e == 'Q' || e == 'q') break;
         }
     }
-    static void TastoAvanti()
+    public static void TastoAvanti()
     {
         Console.WriteLine();
         Console.Write("[E] Avanti");
