@@ -4,11 +4,11 @@ using GiocoV1.Modelli;
 
 namespace GiocoV1.Servizi
 {
-
-    //  NON FUNZIONA NEL JSON PASSO STRINGHE MA POI LI LEGGO COME MOSSE TROVARE UN MODO PER SISTEMARE
-    
     public static class ServizioNemici
     {
+        // ---------------------------------------------------------
+        // CARICA NEMICI DAL JSON
+        // ---------------------------------------------------------
         public static ConfigNemici CaricaNemici(string percorso)
         {
             if (!File.Exists(percorso))
@@ -30,39 +30,68 @@ namespace GiocoV1.Servizi
         }
 
         // ---------------------------------------------------------
-        // 1) TENTA LO SPAWN DI UN NEMICO
+        // ASSEGNA LE MOSSE AI NEMICI E AI BOSS
+        // ---------------------------------------------------------
+        public static void AssegnaMosse(ConfigNemici configurazioneNemici, ServizioMosse servizioMosse)
+        {
+            foreach (var sezione in configurazioneNemici.Sezioni.Values)
+            {
+                // NEMICI NORMALI
+                foreach (var nemico in sezione.Nemici)
+                {
+                    nemico.Mosse = new List<Mossa>();
+
+                    foreach (var nome in nemico.NomiMosse)
+                    {
+                        var mossa = ServizioMosse.OttieniMossaTramiteNome(nome);
+                        if (mossa != null)
+                            nemico.Mosse.Add(mossa);
+                    }
+                }
+
+                // BOSS
+                if (sezione.Boss != null)
+                {
+                    sezione.Boss.Mosse = new List<Mossa>();
+
+                    foreach (var nome in sezione.Boss.NomiMosse)
+                    {
+                        var mossa = ServizioMosse.OttieniMossaTramiteNome(nome);
+                        if (mossa != null)
+                            sezione.Boss.Mosse.Add(mossa);
+                    }
+                }
+            }
+        }
+
+        // ---------------------------------------------------------
+        // TENTA LO SPAWN DI UN NEMICO
         // ---------------------------------------------------------
         public static Entita? TentaSpawnNemico(
             Sezione sezione,
             CellaPosizionata cella,
             ConfigNemici configurazioneNemici)
         {
-            // Se la sezione non ha configurazione → nessuno spawn
             if (!configurazioneNemici.Sezioni.TryGetValue(sezione.Nome, out var configurazione))
                 return null;
 
-            // 1) CONTROLLO BOSS
+            // 1) BOSS
             if (configurazione.Boss != null && !configurazione.Boss.Sconfitto)
             {
-                // Se la cella è una cella boss → spawna solo il boss
                 foreach (var celleBoss in configurazione.CelleBoss)
                 {
                     if (celleBoss.X == cella.X && celleBoss.Y == cella.Y)
-                    {
                         return ClonaBoss(configurazione.Boss);
-                    }
                 }
             }
 
-            // 2) CONTROLLO NEMICI NORMALI
+            // 2) NEMICI NORMALI
             Random random = new();
 
-            // Primo numero → probabilità di spawn
             int tiroSpawnGenerale = random.Next(1, 101);
             if (tiroSpawnGenerale > configurazione.ProbabilitaSpawn)
-                return null; // nessun nemico
+                return null;
 
-            // Secondo numero → quale nemico
             int totaleProbabilità = configurazione.Nemici.Sum(n => n.ProbabilitaSpawn);
             int tiroSpawnNemico = random.Next(1, totaleProbabilità + 1);
 
@@ -73,11 +102,12 @@ namespace GiocoV1.Servizi
                 if (tiroSpawnNemico <= intervallo)
                     return ClonaNemico(nemico);
             }
+
             return null;
         }
 
         // ---------------------------------------------------------
-        // 2) CLONA UN NEMICO
+        // CLONA NEMICO
         // ---------------------------------------------------------
         private static Nemico ClonaNemico(Nemico nemico)
         {
@@ -96,7 +126,7 @@ namespace GiocoV1.Servizi
         }
 
         // ---------------------------------------------------------
-        // 3) CLONA UN BOSS 
+        // CLONA BOSS
         // ---------------------------------------------------------
         private static Boss ClonaBoss(Boss boss)
         {

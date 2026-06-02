@@ -8,6 +8,12 @@ public class Nemico : Entita
     public int Velocita { get; set; } = 1;
     public int Livello { get; set; } = 1;
     public int ProbabilitaSpawn { get; set; } = 0;
+
+    // Nomi delle mosse dal JSON
+    public List<string> NomiMosse { get; set; } = new();
+
+    // Mosse reali assegnate dal ServizioNemici
     public List<Mossa> Mosse { get; set; } = new();
+    
     public List<Oggetto> Inventario { get; } = new();
 }

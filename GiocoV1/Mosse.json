@@ -2,7 +2,7 @@
   "Mosse": [
     {
       "Nome": "Fendente",
-      "PotenzaBase": 10,
+      "PotenzaBase": 5,
       "PrecisioneBase": 100,
       "ProbabilitaCritico": 10
     },

@@ -1,19 +1,41 @@
 {
   "VersioneGioco": "1.0.0",
-  "Timestamp": "2026-05-25T19:35:13.9846411+02:00",
+  "Timestamp": "2026-06-02T23:54:18.2841392+02:00",
   "Personaggio": {
-    "Id": 0,
     "Nome": "Andrea",
-    "SaluteMassima": 80,
-    "SaluteAttuale": 80,
-    "Attacco": 25,
-    "Difesa": 5,
-    "Velocita": 10,
+    "SaluteMassima": 120,
+    "SaluteAttuale": 120,
+    "Attacco": 15,
+    "Difesa": 10,
+    "Velocita": 5,
     "Livello": 1,
     "Esperienza": 0,
-    "Mosse": [],
+    "Mosse": [
+      {
+        "Nome": "Fendente",
+        "PotenzaBase": 10,
+        "PrecisioneBase": 100,
+        "ProbabilitaCritico": 10
+      }
+    ],
     "Inventario": [],
-    "CapacitaInventario": 10,
+    "Equipaggiamenti": {
+      "MosseEquipaggiate": [
+        {
+          "Nome": "Fendente",
+          "PotenzaBase": 10,
+          "PrecisioneBase": 100,
+          "ProbabilitaCritico": 10
+        },
+        null,
+        null
+      ],
+      "Arma": null,
+      "Elmo": null,
+      "Corazza": null,
+      "Gambali": null,
+      "Stivali": null
+    },
     "Monete": 0,
     "PosX": 5,
     "PosY": 5

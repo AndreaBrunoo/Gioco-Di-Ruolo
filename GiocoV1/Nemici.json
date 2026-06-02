@@ -7,32 +7,32 @@
         {
           "Nome": "Lupo",
           "ProbabilitaSpawn": 50,
-          "SaluteMassima": 20,
+          "SaluteMassima": 70,
           "Attacco": 5,
           "Difesa": 2,
           "Velocita": 3,
           "Livello": 1,
-          "Mosse": ["Frustata"]
+          "NomiMosse": ["Frustata"]
         },
         {
           "Nome": "Goblin",
           "ProbabilitaSpawn": 30,
-          "SaluteMassima": 15,
+          "SaluteMassima": 70,
           "Attacco": 4,
           "Difesa": 1,
           "Velocita": 4,
           "Livello": 1,
-          "Mosse": ["Frustata"]
+          "NomiMosse": ["Frustata"]
         },
         {
           "Nome": "Ragno Gigante",
           "ProbabilitaSpawn": 20,
-          "SaluteMassima": 25,
+          "SaluteMassima": 70,
           "Attacco": 6,
           "Difesa": 3,
           "Velocita": 2,
           "Livello": 2,
-          "Mosse": ["Frustata"]
+          "NomiMosse": ["Frustata"]
         }
       ],
       "Boss": {
@@ -42,7 +42,7 @@
         "Difesa": 5,
         "Velocita": 4,
         "Livello": 5,
-          "Mosse": ["Frustata"]
+        "NomiMosse": ["Frustata"]
       }
     }
   }

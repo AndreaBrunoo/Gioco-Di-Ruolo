@@ -2,6 +2,7 @@ using GiocoV1.Modelli;
 using GiocoV1.Enum;
 
 namespace GiocoV1.Servizi;
+
 public static class ServizioIncontri
 {
     public enum StatoMenu
@@ -143,15 +144,20 @@ public static class ServizioIncontri
                 else if (t == 'Q' || t == 'q')
                 {
                     if (TentaFuga(personaggio, nemico))
+                    {
+                        MostraMessaggioFinale("Sei riuscito a fuggire!");
                         return EsitoIncontro.Fuga;
+                    }
 
                     var mossaNemico = ScegliMossaNemico(nemico);
                     EseguiAttacco(nemico, personaggio, mossaNemico);
 
                     if (personaggio.SaluteAttuale <= 0)
+                    {
+                        MostraMessaggioFinale($"Sei stato sconfitto da {nemico.Nome}...");
                         return EsitoIncontro.Sconfitta;
+                    }
                 }
-
                 continue;
             }
 
@@ -179,23 +185,35 @@ public static class ServizioIncontri
                 {
                     EseguiAttacco(personaggio, nemico, mossaScelta);
                     if (nemico.SaluteAttuale <= 0)
+                    {
+                        MostraMessaggioFinale($"Hai sconfitto {nemico.Nome}!");
                         return EsitoIncontro.Vittoria;
+                    }
 
                     var mossaNemico = ScegliMossaNemico(nemico);
                     EseguiAttacco(nemico, personaggio, mossaNemico);
                     if (personaggio.SaluteAttuale <= 0)
+                    {
+                        MostraMessaggioFinale($"Sei stato sconfitto da {nemico.Nome}...");
                         return EsitoIncontro.Sconfitta;
+                    }
                 }
                 else
                 {
                     var mossaNemico = ScegliMossaNemico(nemico);
                     EseguiAttacco(nemico, personaggio, mossaNemico);
                     if (personaggio.SaluteAttuale <= 0)
+                    {
+                        MostraMessaggioFinale($"Sei stato sconfitto da {nemico.Nome}...");
                         return EsitoIncontro.Sconfitta;
+                    }
 
                     EseguiAttacco(personaggio, nemico, mossaScelta);
                     if (nemico.SaluteAttuale <= 0)
+                    {
+                        MostraMessaggioFinale($"Hai sconfitto {nemico.Nome}!");
                         return EsitoIncontro.Vittoria;
+                    }
                 }
 
                 continue;
@@ -228,6 +246,28 @@ public static class ServizioIncontri
     // ------------------------------
     //  UI DINAMICA
     // ------------------------------
+    static void MostraMessaggioCombattimento(Personaggio personaggio, Nemico nemico, string messaggio)
+    {
+        // 1) Ridisegna tutta la UI
+        Console.Clear();
+        DisegnaNemico(nemico);
+        DisegnaGiocatore(personaggio);
+
+        // 2) Scrivi il messaggio al centro
+        int centerX = Console.WindowWidth / 2 - messaggio.Length / 2;
+        int centerY = Console.WindowHeight / 2;
+
+        Console.SetCursorPosition(centerX, centerY);
+        Console.Write(messaggio);
+
+        // 3) Aspetta input
+        Program.TastoAvanti();
+
+        // 4) Ridisegna la UI normale
+        Console.Clear();
+        DisegnaNemico(nemico);
+        DisegnaGiocatore(personaggio);
+    }
 
     static void DisegnaUI(Personaggio p, Nemico n, StatoMenu stato)
     {
@@ -333,11 +373,34 @@ public static class ServizioIncontri
 
     static string BarraHP(int hp, int hpMax, int lunghezza = 20)
     {
+        if (hp < 0) hp = 0;
+        if (hp > hpMax) hp = hpMax;
+        if (hpMax <= 0) hpMax = 1;
+
         double percentuale = (double)hp / hpMax;
+
         int pieni = (int)(percentuale * lunghezza);
+        if (pieni < 0) pieni = 0;
+        if (pieni > lunghezza) pieni = lunghezza;
+
         int vuoti = lunghezza - pieni;
 
         return new string('█', pieni) + new string('░', vuoti);
+    }
+
+
+    static void MostraMessaggioFinale(string messaggio)
+    {
+        Console.Clear();
+
+        int centerX = Console.WindowWidth / 2 - messaggio.Length / 2;
+        int centerY = Console.WindowHeight / 2;
+
+        Console.SetCursorPosition(centerX, centerY);
+        Console.Write(messaggio);
+
+        Program.TastoAvanti();
+        Console.Clear();
     }
 
     // ------------------------------
@@ -348,13 +411,28 @@ public static class ServizioIncontri
     {
         int danno = CalcolaDanno(attaccante, bersaglio, mossa);
 
+        Personaggio p = attaccante as Personaggio
+                    ?? bersaglio as Personaggio
+                    ?? throw new Exception("Nessun personaggio trovato nel combattimento!");
+
+        Nemico n = attaccante as Nemico
+                   ?? bersaglio as Nemico
+                   ?? throw new Exception("Nessun nemico trovato nel combattimento!");
+
+        // --- ATTACCO MANCATO ---
+        if (danno == 0)
+        {
+            MostraMessaggioCombattimento(p, n, $"{Nome(attaccante)} usa {mossa.Nome} ma manca il bersaglio!");
+            return;
+        }
+
         if (bersaglio is Personaggio personaggio)
             personaggio.SaluteAttuale -= danno;
         else if (bersaglio is Nemico nemico)
             nemico.SaluteAttuale -= danno;
 
-        Console.WriteLine($"{Nome(attaccante)} usa {mossa.Nome} e infligge {danno} danni!");
-        Program.TastoAvanti();
+        // --- MESSAGGIO DANNI ---
+        MostraMessaggioCombattimento(p, n, $"{Nome(attaccante)} usa {mossa.Nome} e infligge {danno} danni!");
     }
 
     public static int CalcolaDanno(object attaccante, object bersaglio, Mossa mossa)

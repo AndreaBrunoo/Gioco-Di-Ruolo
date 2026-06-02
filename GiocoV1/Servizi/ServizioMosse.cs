@@ -4,7 +4,7 @@ using GiocoV1.Configurazioni;
 
 namespace GiocoV1.Servizi
 {
-    public static class ServizioMosse
+    public class ServizioMosse
     {
         private static List<Mossa> _mosse = new();
 
@@ -46,18 +46,24 @@ namespace GiocoV1.Servizi
         {
             if (personaggio.Equipaggiamenti.MosseEquipaggiate[slot] != null)
                 personaggio.Mosse.Add(personaggio.Equipaggiamenti.MosseEquipaggiate[slot]!);
-                
+
             personaggio.Equipaggiamenti.MosseEquipaggiate[slot] = mossaDaEquipaggiare;
 
-            personaggio.Mosse.Remove(mossaDaEquipaggiare);            
+            personaggio.Mosse.Remove(mossaDaEquipaggiare);
         }
-        
+
         public static void RimuoviMossaEquipaggiata(Personaggio personaggio, int slot)
         {
             if (personaggio.Equipaggiamenti.MosseEquipaggiate[slot] != null)
                 personaggio.Mosse.Add(personaggio.Equipaggiamenti.MosseEquipaggiate[slot]!);
-                
+
             personaggio.Equipaggiamenti.MosseEquipaggiate[slot] = null;
+        }
+        public static Mossa? OttieniMossaTramiteNome(string nome)
+        {
+            return _mosse
+                .FirstOrDefault(m =>
+                    m.Nome.Equals(nome, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

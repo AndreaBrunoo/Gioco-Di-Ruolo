@@ -8,13 +8,13 @@ class Program
     // Cose da fare
 
     // FARE IL SERVIZIO INCONTRO BOSS
-    // IMPOSTARE UNA MOSSA STANDARD APPENA IL GIOCATORE ENTRA
+    // fARE IN MODO CHE IL PERSONAGGIO IMPOSTI LA SUA PRIMA MOSSA TRAMITE TUTORIAL PER ORA è AUTOMATICO
     // AGGIUNGERE L'OPZIONE INVENTARIO DURANTE IL COMBATTIMENTO
     // AGGIUNGERE OGGETTI OFFENSIVI TIPO (COLTELLO DA LANCIO O SHURIKEN...)
-    // AGGIUNGERE UN JSON PER LE MOSSE E GLI OGGETTI METTERNE UN PAIO E TESTARE
-    
+    // AGGIUNGERE UN JSON PER GLI OGGETTI METTERNE UN PAIO E TESTARE
+
     // Appunti
-    
+
     // Cancella solo la riga del prompt, non tutto lo schermo
     // Console.Write("\r" + new string(' ', Console.WindowWidth) + "\r");
 
@@ -91,8 +91,21 @@ class Program
         {
             Nome = nome,
             PosX = 5,
-            PosY = 5
+            PosY = 5,
+            Mosse = new List<Mossa>
+            {
+                new Mossa
+                {
+                    Nome = "Fendente",
+                    PotenzaBase = 10,
+                    PrecisioneBase = 100,
+                    ProbabilitaCritico = 10
+                }
+            }
         };
+
+        // Equipaggia automaticamente la mossa nello slot 0
+        personaggio.Equipaggiamenti.MosseEquipaggiate[0] = personaggio.Mosse[0];
 
         SchermataBenvenuto(personaggio);
         var servizioClassi = new ServizioClassi();
@@ -236,10 +249,14 @@ class Program
     static void AvviaGioco(StatoGioco stato)
     {
         var personaggio = stato.Personaggio;
-        // 🔹 Ricarico la mappa dal file
+        // 🔹 Carico la mappa dal file
         var mappa = ServizioMappa.CaricaMappa("Mappa_principale.json");
-        // 🔹 Carico la configurazione dei nemici
+        // 🔹 Carico le mosse
+        ServizioMosse.CaricaMosse("Mosse.json");
+        // 🔹 Carico i nemici
         var configNemici = ServizioNemici.CaricaNemici("Nemici.json");
+        // 🔹 Assegno le mosse ai nemici
+        ServizioNemici.AssegnaMosse(configNemici, new ServizioMosse());
         // 🔹 Trovo la sezione corretta
         var sezione = mappa.Sezioni.First(s => s.Nome == stato.AreaCorrente);
         // 🔹 Creo la griglia per il movimento
@@ -267,7 +284,7 @@ class Program
             Console.WriteLine();
             if (risultato.NemicoTrovato != null)
             {
-                ServizioIncontri.Incontro(personaggio, risultato.NemicoTrovato);  
+                ServizioIncontri.Incontro(personaggio, risultato.NemicoTrovato);
             }
         }
     }
