@@ -11,7 +11,8 @@
           "Attacco": 5,
           "Difesa": 2,
           "Velocita": 3,
-          "Livello": 1
+          "Livello": 1,
+          "Mosse": ["Frustata"]
         },
         {
           "Nome": "Goblin",
@@ -20,7 +21,8 @@
           "Attacco": 4,
           "Difesa": 1,
           "Velocita": 4,
-          "Livello": 1
+          "Livello": 1,
+          "Mosse": ["Frustata"]
         },
         {
           "Nome": "Ragno Gigante",
@@ -29,7 +31,8 @@
           "Attacco": 6,
           "Difesa": 3,
           "Velocita": 2,
-          "Livello": 2
+          "Livello": 2,
+          "Mosse": ["Frustata"]
         }
       ],
       "Boss": {
@@ -38,7 +41,8 @@
         "Attacco": 12,
         "Difesa": 5,
         "Velocita": 4,
-        "Livello": 5
+        "Livello": 5,
+          "Mosse": ["Frustata"]
       }
     }
   }

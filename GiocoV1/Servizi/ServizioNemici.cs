@@ -4,6 +4,9 @@ using GiocoV1.Modelli;
 
 namespace GiocoV1.Servizi
 {
+
+    //  NON FUNZIONA NEL JSON PASSO STRINGHE MA POI LI LEGGO COME MOSSE TROVARE UN MODO PER SISTEMARE
+    
     public static class ServizioNemici
     {
         public static ConfigNemici CaricaNemici(string percorso)
