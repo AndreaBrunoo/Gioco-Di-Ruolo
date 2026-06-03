@@ -1,0 +1,90 @@
+{
+  "Pozioni": [
+    {
+      "Nome": "Pozione Curativa",
+      "BonusSalute": 10
+    },
+    {
+      "Nome": "Pozione Grande",
+      "BonusSalute": 25 
+    }
+  ],
+
+  "Armi": [
+    {
+      "Nome": "Spada di Ferro",
+      "BonusAttacco": 3
+    },
+    {
+      "Nome": "Arco di Legno",
+      "BonusAttacco": 2,
+      "BonusVelocita": 1
+    }
+  ],
+
+  "Materiali": [
+    {
+      "Nome": "Erba Medicinale"
+    },
+    {
+      "Nome": "Minerale di Ferro"
+    }
+  ],
+
+  "Equipaggiamenti": {
+    "Elmi": [
+      {
+        "Nome": "Elmo di Cuoio",
+        "BonusDifesa": 1
+      },
+      {
+        "Nome": "Elmo di Ferro",
+        "BonusDifesa": 3
+      }
+    ],
+    "Corazze": [
+      {
+        "Nome": "Corazza di Cuoio",
+        "BonusDifesa": 2
+      },
+      {
+        "Nome": "Corazza di Ferro",
+        "BonusDifesa": 5,
+        "BonusVelocita": -1
+      }
+    ],
+    "Gambali": [
+      {
+        "Nome": "Gambali di Cuoio",
+        "BonusDifesa": 1
+      },
+      {
+        "Nome": "Gambali di Ferro",
+        "BonusDifesa": 3,
+        "BonusVelocita": -1
+      }
+    ],
+    "Stivali": [
+      {
+        "Nome": "Stivali di Cuoio",
+        "BonusVelocita": 1
+      },
+      {
+        "Nome": "Stivali Rinforzati",
+        "BonusVelocita": 2,
+        "BonusDifesa": 1
+      }
+    ],
+    "Armi": [
+      {
+        "Nome": "Spada di Bronzo",
+        "BonusAttacco": 4
+      },
+      {
+        "Nome": "Ascia Pesante",
+        "BonusAttacco": 6,
+        "BonusVelocita": -1
+      }
+    ]
+  }
+}

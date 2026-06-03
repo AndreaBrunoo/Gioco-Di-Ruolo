@@ -325,7 +325,8 @@ class Program
                         Console.Write($"ATK +{oggetto.BonusAttacco} ");
                         Console.Write($"DIF +{oggetto.BonusDifesa} ");
                         Console.Write($"VEL +{oggetto.BonusVelocita} ");
-                        Console.Write($"HP +{oggetto.BonusSalute}");
+                        Console.Write($"HP +{oggetto.BonusSalute} ");
+                        Console.Write($"{oggetto.Tipologia}");
                     }
                     TastoIndietro();
                     continue;

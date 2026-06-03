@@ -10,7 +10,7 @@ public class Personaggio
     public int Livello { get; set; } = 1;
     public int Esperienza { get; set; } = 0;
     public List<Mossa> Mosse { get; set; } = new();
-    public List<Oggetto> Inventario { get; set; } = new();
+    public List<OggettoInventario> Inventario { get; set; } = new();
     public Equipaggiamento Equipaggiamenti { get; set; } = new();
     public int Monete { get; set; } = 0;
     public int PosX { get; set; }
