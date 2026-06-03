@@ -2,68 +2,67 @@ using System.Text.Json;
 using GiocoV1.Modelli;
 using GiocoV1.Configurazioni;
 
-namespace GiocoV1.Servizi
+namespace GiocoV1.Servizi;
+
+public class ServizioMosse
 {
-    public class ServizioMosse
+    private static List<Mossa> _mosse = new();
+
+    public static void CaricaMosse(string percorso)
     {
-        private static List<Mossa> _mosse = new();
+        if (!File.Exists(percorso))
+            throw new FileNotFoundException($"File mosse non trovato: {percorso}");
 
-        public static void CaricaMosse(string percorso)
+        string json = File.ReadAllText(percorso);
+
+        var opzioni = new JsonSerializerOptions
         {
-            if (!File.Exists(percorso))
-                throw new FileNotFoundException($"File mosse non trovato: {percorso}");
+            PropertyNameCaseInsensitive = true
+        };
 
-            string json = File.ReadAllText(percorso);
+        var config = JsonSerializer.Deserialize<ConfigMosse>(json, opzioni)
+            ?? throw new Exception("Errore nel parsing del JSON delle mosse!");
 
-            var opzioni = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
+        _mosse = config.Mosse;
+    }
 
-            var config = JsonSerializer.Deserialize<ConfigMosse>(json, opzioni)
-                ?? throw new Exception("Errore nel parsing del JSON delle mosse!");
-
-            _mosse = config.Mosse;
-        }
-
-        public static void AggiungiMossaAlPersonaggio(Personaggio personaggio, Mossa nuovaMossa)
+    public static void AggiungiMossaAlPersonaggio(Personaggio personaggio, Mossa nuovaMossa)
+    {
+        // Se c'è uno slot libero, equipaggia automaticamente
+        for (int i = 0; i < personaggio.Equipaggiamenti.MosseEquipaggiate.Length; i++)
         {
-            // Se c'è uno slot libero, equipaggia automaticamente
-            for (int i = 0; i < personaggio.Equipaggiamenti.MosseEquipaggiate.Length; i++)
+            if (personaggio.Equipaggiamenti.MosseEquipaggiate[i] == null)
             {
-                if (personaggio.Equipaggiamenti.MosseEquipaggiate[i] == null)
-                {
-                    personaggio.Equipaggiamenti.MosseEquipaggiate[i] = nuovaMossa;
-                    return;
-                }
+                personaggio.Equipaggiamenti.MosseEquipaggiate[i] = nuovaMossa;
+                return;
             }
-
-            // Altrimenti finisce nella lista delle mosse possedute
-            personaggio.Mosse.Add(nuovaMossa);
         }
 
-        public static void EquipaggiaMossa(Personaggio personaggio, Mossa mossaDaEquipaggiare, int slot)
-        {
-            if (personaggio.Equipaggiamenti.MosseEquipaggiate[slot] != null)
-                personaggio.Mosse.Add(personaggio.Equipaggiamenti.MosseEquipaggiate[slot]!);
+        // Altrimenti finisce nella lista delle mosse possedute
+        personaggio.Mosse.Add(nuovaMossa);
+    }
 
-            personaggio.Equipaggiamenti.MosseEquipaggiate[slot] = mossaDaEquipaggiare;
+    public static void EquipaggiaMossa(Personaggio personaggio, Mossa mossaDaEquipaggiare, int slot)
+    {
+        if (personaggio.Equipaggiamenti.MosseEquipaggiate[slot] != null)
+            personaggio.Mosse.Add(personaggio.Equipaggiamenti.MosseEquipaggiate[slot]!);
 
-            personaggio.Mosse.Remove(mossaDaEquipaggiare);
-        }
+        personaggio.Equipaggiamenti.MosseEquipaggiate[slot] = mossaDaEquipaggiare;
 
-        public static void RimuoviMossaEquipaggiata(Personaggio personaggio, int slot)
-        {
-            if (personaggio.Equipaggiamenti.MosseEquipaggiate[slot] != null)
-                personaggio.Mosse.Add(personaggio.Equipaggiamenti.MosseEquipaggiate[slot]!);
+        personaggio.Mosse.Remove(mossaDaEquipaggiare);
+    }
 
-            personaggio.Equipaggiamenti.MosseEquipaggiate[slot] = null;
-        }
-        public static Mossa? OttieniMossaTramiteNome(string nome)
-        {
-            return _mosse
-                .FirstOrDefault(m =>
-                    m.Nome.Equals(nome, StringComparison.OrdinalIgnoreCase));
-        }
+    public static void RimuoviMossaEquipaggiata(Personaggio personaggio, int slot)
+    {
+        if (personaggio.Equipaggiamenti.MosseEquipaggiate[slot] != null)
+            personaggio.Mosse.Add(personaggio.Equipaggiamenti.MosseEquipaggiate[slot]!);
+
+        personaggio.Equipaggiamenti.MosseEquipaggiate[slot] = null;
+    }
+    public static Mossa? OttieniMossaTramiteNome(string nome)
+    {
+        return _mosse
+            .FirstOrDefault(m =>
+                m.Nome.Equals(nome, StringComparison.OrdinalIgnoreCase));
     }
 }

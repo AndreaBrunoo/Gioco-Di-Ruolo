@@ -319,14 +319,14 @@ class Program
                         TastoIndietro();
                         continue;
                     }
-                    foreach (var oggetto in personaggio.Inventario)
+                    foreach (var oggettoInventario in personaggio.Inventario)
                     {
-                        Console.WriteLine($"{oggetto.Quantita}X {oggetto.Nome}");
-                        Console.Write($"ATK +{oggetto.BonusAttacco} ");
-                        Console.Write($"DIF +{oggetto.BonusDifesa} ");
-                        Console.Write($"VEL +{oggetto.BonusVelocita} ");
-                        Console.Write($"HP +{oggetto.BonusSalute} ");
-                        Console.Write($"{oggetto.Tipologia}");
+                        Console.WriteLine($"{oggettoInventario.Quantita}X {oggettoInventario.Oggetto.Nome}");
+                        Console.Write($"ATK +{oggettoInventario.Oggetto.BonusAttacco} ");
+                        Console.Write($"DIF +{oggettoInventario.Oggetto.BonusDifesa} ");
+                        Console.Write($"VEL +{oggettoInventario.Oggetto.BonusVelocita} ");
+                        Console.Write($"HP +{oggettoInventario.Oggetto.BonusSalute} ");
+                        Console.Write($"{oggettoInventario.Oggetto.Tipologia}");
                     }
                     TastoIndietro();
                     continue;

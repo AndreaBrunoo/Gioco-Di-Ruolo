@@ -127,7 +127,7 @@ public static class ServizioIncontri
 
         while (true)
         {
-            DisegnaUI(personaggio, nemico, stato);
+            DisegnaUIConNemico(personaggio, nemico, stato);
             char t = Console.ReadKey(true).KeyChar;
 
             // ------------------------------
@@ -148,7 +148,7 @@ public static class ServizioIncontri
                         MostraMessaggioFinale("Sei riuscito a fuggire!");
                         return EsitoIncontro.Fuga;
                     }
-
+                    MostraMessaggioFinale("Non si scappa!");
                     var mossaNemico = ScegliMossaNemico(nemico);
                     EseguiAttacco(nemico, personaggio, mossaNemico);
 
@@ -269,7 +269,7 @@ public static class ServizioIncontri
         DisegnaGiocatore(personaggio);
     }
 
-    static void DisegnaUI(Personaggio p, Nemico n, StatoMenu stato)
+    static void DisegnaUIConNemico(Personaggio p, Nemico n, StatoMenu stato)
     {
         Console.Clear();
         DisegnaNemico(n);
@@ -387,7 +387,6 @@ public static class ServizioIncontri
 
         return new string('█', pieni) + new string('░', vuoti);
     }
-
 
     static void MostraMessaggioFinale(string messaggio)
     {
