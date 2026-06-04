@@ -1,5 +1,5 @@
 {
-  "Pozioni": [
+  "Consumabili": [
     {
       "Nome": "Pozione Curativa",
       "BonusSalute": 10
@@ -12,13 +12,14 @@
 
   "Offensivi": [
     {
-      "Nome": "Spada di Ferro",
-      "BonusAttacco": 3
+      "Nome": "Shuriken",
+      "BonusAttacco": 2,
+      "BonusVelocita": 5
     },
     {
-      "Nome": "Arco di Legno",
-      "BonusAttacco": 2,
-      "BonusVelocita": 1
+      "Nome": "Coltello da lancio",
+      "BonusAttacco": 3,
+      "BonusVelocita": 3
     }
   ],
 

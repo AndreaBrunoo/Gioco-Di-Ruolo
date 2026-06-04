@@ -59,6 +59,7 @@ public class ServizioMosse
 
         personaggio.Equipaggiamenti.MosseEquipaggiate[slot] = null;
     }
+    
     public static Mossa? OttieniMossaTramiteNome(string nome)
     {
         return _mosse

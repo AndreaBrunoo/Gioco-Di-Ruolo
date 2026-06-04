@@ -2,13 +2,13 @@ namespace GiocoV1.Enum;
 
 public enum CategoriaOggetto
 {
-    Pozione,
+    Consumabile,
     Offensivo,
     Materiale,
 
     Elmo,
     Corazza,
-    Gambale,
-    Stivale,
+    Gambali,
+    Stivali,
     Arma
 }

@@ -333,7 +333,7 @@ public static class ServizioIncontri
         }
     }
 
-    static void DisegnaGiocatore(Personaggio p)
+    public static void DisegnaGiocatore(Personaggio p)
     {
         string barra = BarraHP(p.SaluteAttuale, p.SaluteMassima);
 
@@ -418,19 +418,15 @@ public static class ServizioIncontri
                    ?? bersaglio as Nemico
                    ?? throw new Exception("Nessun nemico trovato nel combattimento!");
 
-        // --- ATTACCO MANCATO ---
         if (danno == 0)
         {
             MostraMessaggioCombattimento(p, n, $"{Nome(attaccante)} usa {mossa.Nome} ma manca il bersaglio!");
             return;
         }
 
-        if (bersaglio is Personaggio personaggio)
-            personaggio.SaluteAttuale -= danno;
-        else if (bersaglio is Nemico nemico)
-            nemico.SaluteAttuale -= danno;
+        if (bersaglio is Personaggio personaggio) personaggio.SaluteAttuale -= danno;
+        else if (bersaglio is Nemico nemico) nemico.SaluteAttuale -= danno;
 
-        // --- MESSAGGIO DANNI ---
         MostraMessaggioCombattimento(p, n, $"{Nome(attaccante)} usa {mossa.Nome} e infligge {danno} danni!");
     }
 

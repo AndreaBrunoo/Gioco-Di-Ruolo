@@ -2,16 +2,16 @@
 using GiocoV1.Servizi;
 using GiocoV1.Configurazioni;
 using GiocoV1.Dtos;
+using GiocoV1.Enum;
 
 class Program
 {
     // Cose da fare
 
     // FARE IL SERVIZIO INCONTRO BOSS
-    // fARE IN MODO CHE IL PERSONAGGIO IMPOSTI LA SUA PRIMA MOSSA TRAMITE TUTORIAL PER ORA è AUTOMATICO
+    // FARE IN MODO CHE IL PERSONAGGIO IMPOSTI LA SUA PRIMA MOSSA TRAMITE TUTORIAL PER ORA è AUTOMATICO
+    // IMPOSTARE UN ARMA PREDEFINITA TRAMITE CLASSE PERSONAGGIO
     // AGGIUNGERE L'OPZIONE INVENTARIO DURANTE IL COMBATTIMENTO
-    // AGGIUNGERE OGGETTI OFFENSIVI TIPO (COLTELLO DA LANCIO O SHURIKEN...)
-    // AGGIUNGERE UN JSON PER GLI OGGETTI METTERNE UN PAIO E TESTARE
 
     // Appunti
 
@@ -101,11 +101,33 @@ class Program
                     PrecisioneBase = 100,
                     ProbabilitaCritico = 10
                 }
+            },
+            Inventario = new List<OggettoInventario>
+            {
+                new OggettoInventario
+                {
+                    Oggetto = new Oggetto
+                    {
+                        Nome = "Bastone",
+                        Categoria = CategoriaOggetto.Arma,
+                    },
+                    Quantita = 1
+                },
+                new OggettoInventario
+                {
+                    Oggetto = new Oggetto
+                    {
+                        Nome = "Pozione",
+                        Categoria = CategoriaOggetto.Consumabile,
+                    },
+                    Quantita = 1
+                }
             }
         };
 
-        // Equipaggia automaticamente la mossa nello slot 0
+        // Equipaggia automaticamente la mossa nello slot 0 e l'arma
         personaggio.Equipaggiamenti.MosseEquipaggiate[0] = personaggio.Mosse[0];
+        ServizioOggetti.EquipaggiaOggettoDaNome(personaggio, "Bastone");
 
         SchermataBenvenuto(personaggio);
         var servizioClassi = new ServizioClassi();
@@ -326,7 +348,7 @@ class Program
                         Console.Write($"DIF +{oggettoInventario.Oggetto.BonusDifesa} ");
                         Console.Write($"VEL +{oggettoInventario.Oggetto.BonusVelocita} ");
                         Console.Write($"HP +{oggettoInventario.Oggetto.BonusSalute} ");
-                        Console.Write($"{oggettoInventario.Oggetto.Tipologia}");
+                        Console.Write($"{oggettoInventario.Oggetto.Categoria}");
                     }
                     TastoIndietro();
                     continue;
@@ -345,7 +367,7 @@ class Program
                         Console.WriteLine($"{mossa.Nome}");
                         Console.Write($"Potenza: {mossa.PotenzaBase} ");
                         Console.Write($"Precisione: {mossa.PrecisioneBase} ");
-                        Console.Write($"Prob. Crit.: {mossa.ProbabilitaCritico} ");
+                        Console.Write($"Prob. Crit.: {mossa.ProbabilitaCritico}% ");
                     }
                     TastoIndietro();
                     continue;
@@ -392,10 +414,33 @@ class Program
         Console.WriteLine($"{"║",-2}{"Esperienza",-18}{personaggio.Esperienza,-11}║");
         Console.WriteLine($"{"║",-2}{"Livello",-18}{personaggio.Livello,-11}║");
         Console.WriteLine($"{"║",-2}{"Monete",-18}{personaggio.Monete,-11}║");
-        // Console.WriteLine($"{"║",-2}{"Arma",-18}{Equipaggiamento.Arma.TipologiaArma,-11}║");
+        if (personaggio.Equipaggiamenti.Arma != null)
+            Console.WriteLine($"{"║",-2}{"Arma",-18}{personaggio.Equipaggiamenti.Arma.Oggetto.Nome,-11}║");
 
         Console.WriteLine(BordoBottom);
         TastoIndietro();
+    }
+
+    // ------------------------------
+    //  UI DINAMICA
+    // ------------------------------
+    static void MostraMessaggio(Personaggio personaggio, string messaggio)
+    {
+        // 1) Ridisegna tutta la UI
+        Console.Clear();
+        ServizioIncontri.DisegnaGiocatore(personaggio);
+
+        // 2) Scrivi il messaggio al centro
+        int centerX = Console.WindowWidth / 2 - messaggio.Length / 2;
+        int centerY = Console.WindowHeight / 2;
+
+        Console.SetCursorPosition(centerX, centerY);
+        Console.Write(messaggio);
+        TastoAvanti();
+
+        // 3) Ridisegna la UI normale
+        Console.Clear();
+        ServizioIncontri.DisegnaGiocatore(personaggio);
     }
 
     // ============================
@@ -426,12 +471,19 @@ class Program
     }
     public static void TastoAvanti()
     {
-        Console.WriteLine();
-        Console.Write("[E] Avanti");
+        string testo = "[E] Avanti";
+
+        int posX = Console.WindowWidth - testo.Length - 2; // margine di 2
+        int posY = Console.WindowHeight - 2; // penultima riga
+
+        Console.SetCursorPosition(posX, posY);
+        Console.Write(testo);
+
         while (true)
         {
             char e = Console.ReadKey(true).KeyChar;
             if (e == 'E' || e == 'e') break;
         }
     }
+
 }

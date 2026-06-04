@@ -35,7 +35,7 @@ public static class ServizioOggetti
         // Pozioni
         foreach (var o in c.Pozioni)
         {
-            o.Categoria = CategoriaOggetto.Pozione;
+            o.Categoria = CategoriaOggetto.Consumabile;
             _tutti.Add(o);
         }
 
@@ -68,13 +68,13 @@ public static class ServizioOggetti
 
         foreach (var o in c.Equipaggiamenti.Gambali)
         {
-            o.Categoria = CategoriaOggetto.Gambale;
+            o.Categoria = CategoriaOggetto.Gambali;
             _tutti.Add(o);
         }
 
         foreach (var o in c.Equipaggiamenti.Stivali)
         {
-            o.Categoria = CategoriaOggetto.Stivale;
+            o.Categoria = CategoriaOggetto.Stivali;
             _tutti.Add(o);
         }
 
@@ -91,22 +91,73 @@ public static class ServizioOggetti
             .FirstOrDefault(o => o.Oggetto.Nome.Equals(
                 nuovoOggetto.Oggetto.Nome, StringComparison.OrdinalIgnoreCase));
 
-        if (esistente != null)
-            esistente.Quantita += nuovoOggetto.Quantita;
-        else
-            personaggio.Inventario.Add(nuovoOggetto);
+        if (esistente != null) esistente.Quantita += nuovoOggetto.Quantita;
+        else personaggio.Inventario.Add(nuovoOggetto);
     }
 
     public static void EquipaggiaOggetto(Personaggio personaggio, OggettoInventario nuovoOggetto)
     {
-        
+        var categoria = nuovoOggetto.Oggetto.Categoria;
+        var esistente = personaggio.Inventario
+            .FirstOrDefault(o => o.Oggetto.Nome.Equals(
+                nuovoOggetto.Oggetto.Nome, StringComparison.OrdinalIgnoreCase));
+
+        if (esistente == null) return;
+        var equipaggiamentoVecchio = personaggio.Equipaggiamenti.Get(categoria);
+
+        if (equipaggiamentoVecchio == null)
+        {
+            personaggio.Equipaggiamenti.Set(categoria, nuovoOggetto);
+
+            if (esistente.Quantita > 1) esistente.Quantita -= 1;
+            else personaggio.Inventario.Remove(esistente);
+            return;
+        }
+
+        var inInventario = personaggio.Inventario
+            .FirstOrDefault(o => o.Oggetto.Nome.Equals(
+                equipaggiamentoVecchio.Oggetto.Nome, StringComparison.OrdinalIgnoreCase));
+
+        if (inInventario != null) inInventario.Quantita += 1;
+        else personaggio.Inventario.Add(new OggettoInventario
+        {
+            Oggetto = equipaggiamentoVecchio.Oggetto,
+            Quantita = 1
+        });
+        personaggio.Equipaggiamenti.Set(categoria, nuovoOggetto);
+
+        if (esistente.Quantita > 1) esistente.Quantita -= 1;
+        else personaggio.Inventario.Remove(esistente);
     }
 
-    public static void RimuoviOggettoEquipaggiato()
+    public static void EquipaggiaOggettoDaNome(Personaggio personaggio, string nomeOggetto)
     {
-        
+        var oggetto = personaggio.Inventario
+            .FirstOrDefault(o => o.Oggetto.Nome.Equals(
+                nomeOggetto, StringComparison.OrdinalIgnoreCase));
+
+        if (oggetto == null) return;
+        EquipaggiaOggetto(personaggio, oggetto);
     }
 
-    public static Oggetto? OttieniOggettoTramiteNome(string nome)
-        => _tutti.FirstOrDefault(o => o.Nome.Equals(nome, StringComparison.OrdinalIgnoreCase));
+    public static void RimuoviOggettoEquipaggiato(Personaggio personaggio, OggettoInventario oggettoDaRimuovere)
+    {
+        var categoria = oggettoDaRimuovere.Oggetto.Categoria;
+
+        var equipaggiamentoVecchio = personaggio.Equipaggiamenti.Get(categoria);
+        if (equipaggiamentoVecchio == null) return;
+
+        var inInventario = personaggio.Inventario
+            .FirstOrDefault(o => o.Oggetto.Nome.Equals(
+                equipaggiamentoVecchio.Oggetto.Nome, StringComparison.OrdinalIgnoreCase));
+
+        if (inInventario != null) inInventario.Quantita += 1;
+        else personaggio.Inventario.Add(new OggettoInventario
+        {
+            Oggetto = equipaggiamentoVecchio.Oggetto,
+            Quantita = 1
+        });
+
+        personaggio.Equipaggiamenti.Set(categoria, null);
+    }
 }
