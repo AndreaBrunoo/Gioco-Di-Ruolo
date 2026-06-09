@@ -1,4 +1,5 @@
 namespace GiocoV1.Modelli;
+
 public class StatoGioco
 {
     public string VersioneGioco { get; set; } = "1.0.0";

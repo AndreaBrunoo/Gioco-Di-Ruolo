@@ -1,7 +1,7 @@
 {
   "Sezioni": {
     "Foresta Tutorial": {
-      "ProbabilitaSpawn": 40,
+      "ProbabilitaSpawn": 10,
       "CelleBoss": [
         {
           "X": 8,
@@ -20,7 +20,7 @@
           "NomiMosse": [
             "Frustata"
           ],
-          "Inventario": [
+          "NomiOggetti": [
             {
               "Nome": "Pozione Curativa",
               "Quantita": 5
@@ -42,7 +42,7 @@
           "NomiMosse": [
             "Frustata"
           ],
-          "Inventario": [
+          "NomiOggetti": [
             {
               "Nome": "Pozione Curativa",
               "Quantita": 5
@@ -60,7 +60,7 @@
           "NomiMosse": [
             "Frustata"
           ],
-          "Inventario": [
+          "NomiOggetti": [
             {
               "Nome": "Pozione Curativa",
               "Quantita": 5
@@ -78,7 +78,7 @@
         "NomiMosse": [
           "Frustata"
         ],
-          "Inventario": [
+          "NomiOggetti": [
             {
               "Nome": "Pozione Curativa",
               "Quantita": 2

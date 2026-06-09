@@ -48,7 +48,7 @@ public static class ServizioDrop
         List<string> messaggi = new()
         {
             $"Hai sconfitto {nemico.Nome}!",
-            $"Hai ottenuto {esperienza} XP e {monete} monete"
+            $"Hai ottenuto {esperienza} XP e {monete} Monete"
         };
 
         if (oggettiOttenuti.Count > 0)
@@ -64,7 +64,7 @@ public static class ServizioDrop
     public static int CalcolaXpPerLivello(int livello)
     {
         if (livello >= 100)
-            return int.MaxValue; // livello massimo
+            return int.MaxValue;
 
         return livello * livello * 50;
     }

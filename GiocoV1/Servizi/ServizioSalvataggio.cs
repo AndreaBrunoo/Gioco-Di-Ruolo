@@ -3,6 +3,7 @@ using GiocoV1.Modelli;
 using GiocoV1.Configurazioni;
 
 namespace GiocoV1.Servizi;
+
 public class ServizioSalvataggio
 {
     private readonly JsonSerializerOptions _options = new()

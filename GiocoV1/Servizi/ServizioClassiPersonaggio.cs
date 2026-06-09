@@ -1,10 +1,10 @@
 using GiocoV1.Modelli;
 
-namespace GiocoV1.Servizi
+namespace GiocoV1.Servizi;
+
+public class ServizioClassi
 {
-    public class ServizioClassi
-    {
-        public List<ClassePersonaggio> ClassiDisponibili => new()
+    public List<ClassePersonaggio> ClassiDisponibili => new()
         {
             new ClassePersonaggio
             {
@@ -32,13 +32,12 @@ namespace GiocoV1.Servizi
             }
         };
 
-        public void ApplicaClasse(Personaggio p, ClassePersonaggio classe)
-        {
-            p.SaluteMassima = classe.Salute;
-            p.SaluteAttuale = classe.Salute;
-            p.Attacco = classe.Attacco;
-            p.Difesa = classe.Difesa;
-            p.Velocita = classe.Velocita;
-        }
+    public void ApplicaClasse(Personaggio p, ClassePersonaggio classe)
+    {
+        p.SaluteMassima = classe.Salute;
+        p.SaluteAttuale = classe.Salute;
+        p.Attacco = classe.Attacco;
+        p.Difesa = classe.Difesa;
+        p.Velocita = classe.Velocita;
     }
 }

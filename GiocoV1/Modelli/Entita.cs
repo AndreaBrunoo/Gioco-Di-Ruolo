@@ -1,4 +1,5 @@
 namespace GiocoV1.Modelli;
+
 public abstract class Entita
 {
     public string Nome { get; set; } = "";

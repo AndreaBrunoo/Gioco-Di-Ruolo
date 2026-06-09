@@ -3,6 +3,7 @@ using GiocoV1.Configurazioni;
 using GiocoV1.Dtos;
 
 namespace GiocoV1.Servizi;
+
 public class ServizioMovimento
 {
     private readonly Cella?[,] _griglia;
@@ -16,14 +17,12 @@ public class ServizioMovimento
         // 🔹 Se il tasto non è valido → non muovere e mostra la cella attuale
         if (!"wasdWASD".Contains(direzione))
         {
-            return new RisultatoMovimento
-            {
-                Messaggio = $"Ti trovi in: {cellaAttuale.Nome}. {cellaAttuale.Descrizione}",
-                NemicoTrovato = null
-            };
+            var risultato = new RisultatoMovimento();
+            ImpostaMessaggiBase(risultato, cellaAttuale);
+            risultato.NemicoTrovato = null;
+            return risultato;
         }
 
-        var risultato = new RisultatoMovimento();
         int nuovoX = personaggio.PosX;
         int nuovoY = personaggio.PosY;
 
@@ -35,25 +34,22 @@ public class ServizioMovimento
         if (nuovoX < 0 || nuovoX >= _griglia.GetLength(1) ||
             nuovoY < 0 || nuovoY >= _griglia.GetLength(0))
         {
-            return new RisultatoMovimento
-            {
-                Messaggio = $"Ti trovi in: {cellaAttuale.Nome}. {cellaAttuale.Descrizione}",
-                NemicoTrovato = null
-            };
+            var risultato = new RisultatoMovimento();
+            ImpostaMessaggiBase(risultato, cellaAttuale);
+            risultato.NemicoTrovato = null;
+            return risultato;
         }
 
         if (_griglia[nuovoY, nuovoX] == null)
         {
-            return new RisultatoMovimento
-            {
-                Messaggio = $"Ti trovi in: {cellaAttuale.Nome}. {cellaAttuale.Descrizione}",
-                NemicoTrovato = null
-            };
+            var risultato = new RisultatoMovimento();
+            ImpostaMessaggiBase(risultato, cellaAttuale);
+            risultato.NemicoTrovato = null;
+            return risultato;
         }
 
         personaggio.PosX = nuovoX;
         personaggio.PosY = nuovoY;
-
         var cella = _griglia[nuovoY, nuovoX]!;
 
         var cellaPosizionata = new CellaPosizionata
@@ -63,17 +59,33 @@ public class ServizioMovimento
             Nome = cella.Nome,
             Descrizione = cella.Descrizione
         };
+        var risultato2 = new RisultatoMovimento();
+
+        if (cella.CollegaA != null)
+        {
+            ImpostaMessaggiBase(risultato2, cella);
+            risultato2.Collegamento = cella.CollegaA;
+            return risultato2;
+        }
 
         // ⭐ TENTA LO SPAWN ⭐
         var entita = ServizioNemici.TentaSpawnNemico(sezione, cellaPosizionata, configNemici);
 
+        ImpostaMessaggiBase(risultato2, cella);
+
         if (entita != null)
         {
-            risultato.NemicoTrovato = entita;
-            return risultato;
+            risultato2.NemicoTrovato = entita;
+            return risultato2;
         }
 
-        risultato.Messaggio = $"Ti trovi in: {cella.Nome}. {cella.Descrizione}";
-        return risultato;
+        risultato2.NemicoTrovato = null;
+        return risultato2;
+    }
+
+    private static void ImpostaMessaggiBase(RisultatoMovimento risultato, Cella cella)
+    {
+        risultato.Messaggio1 = $"Ti trovi in: {cella.Nome}.";
+        risultato.Descrizione = cella.Descrizione;
     }
 }

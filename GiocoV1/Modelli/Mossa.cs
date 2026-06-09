@@ -1,4 +1,5 @@
 namespace GiocoV1.Modelli;
+
 public class Mossa
 {
     public string Nome { get; set; } = string.Empty;

@@ -1,8 +1,11 @@
-namespace GiocoV1.Modelli
+using GiocoV1.Dtos;
+
+namespace GiocoV1.Modelli;
+
+public class Cella
 {
-    public class Cella
-    {
-        public string Nome { get; set; } = string.Empty;
-        public string Descrizione { get; set; } = string.Empty;
-    }
+    public string Nome { get; set; } = "";
+    public string Descrizione { get; set; } = "";
+
+    public CollegamentoCella? CollegaA { get; set; }
 }

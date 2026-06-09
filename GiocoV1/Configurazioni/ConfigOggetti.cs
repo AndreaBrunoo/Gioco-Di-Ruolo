@@ -7,8 +7,6 @@ public class ConfigOggetti
     public List<Oggetto> Consumabili { get; set; } = new();
     public List<Oggetto> Offensivi { get; set; } = new();
     public List<Oggetto> Materiali { get; set; } = new();
-
-    // Aggiunta coerente
     public EquipaggiamentiConfig Equipaggiamenti { get; set; } = new();
 }
 
@@ -18,5 +16,5 @@ public class EquipaggiamentiConfig
     public List<Oggetto> Corazze { get; set; } = new();
     public List<Oggetto> Gambali { get; set; } = new();
     public List<Oggetto> Stivali { get; set; } = new();
-    public List<Oggetto> Armi { get; set; } = new(); // Armi equipaggiabili
+    public List<Oggetto> Armi { get; set; } = new();
 }

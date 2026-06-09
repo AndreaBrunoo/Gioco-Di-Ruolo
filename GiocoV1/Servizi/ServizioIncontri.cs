@@ -12,7 +12,7 @@ public static class ServizioIncontri
         Inventario,
         Inventario_Pozioni,
         Inventario_Supporti,
-        Inventario_Offensivi
+        Inventario_Offensivi,
     }
 
     private static readonly Random random = new();
@@ -145,16 +145,16 @@ public static class ServizioIncontri
                 {
                     if (TentaFuga(personaggio, nemico))
                     {
-                        MostraMessaggioFinale("Sei riuscito a fuggire!");
+                        MostraMessaggioFinale("Sei riuscito a fuggire!", personaggio);
                         return EsitoIncontro.Fuga;
                     }
-                    MostraMessaggioFinale("Non si scappa!");
+                    MostraMessaggioCombattimento(personaggio, nemico, "Non si scappa!");
                     var mossaNemico = ScegliMossaNemico(nemico);
                     EseguiAttacco(nemico, personaggio, mossaNemico);
 
                     if (personaggio.SaluteAttuale <= 0)
                     {
-                        MostraMessaggioFinale($"Sei stato sconfitto da {nemico.Nome}...");
+                        MostraMessaggioFinale($"Sei stato sconfitto da {nemico.Nome}...", personaggio);
                         return EsitoIncontro.Sconfitta;
                     }
                 }
@@ -190,7 +190,7 @@ public static class ServizioIncontri
                     EseguiAttacco(nemico, personaggio, mossaNemico);
                     if (personaggio.SaluteAttuale <= 0)
                     {
-                        MostraMessaggioFinale($"Sei stato sconfitto da {nemico.Nome}...");
+                        MostraMessaggioFinale($"Sei stato sconfitto da {nemico.Nome}...", personaggio);
                         return EsitoIncontro.Sconfitta;
                     }
                 }
@@ -200,7 +200,7 @@ public static class ServizioIncontri
                     EseguiAttacco(nemico, personaggio, mossaNemico);
                     if (personaggio.SaluteAttuale <= 0)
                     {
-                        MostraMessaggioFinale($"Sei stato sconfitto da {nemico.Nome}...");
+                        MostraMessaggioFinale($"Sei stato sconfitto da {nemico.Nome}...", personaggio);
                         return EsitoIncontro.Sconfitta;
                     }
 
@@ -220,7 +220,6 @@ public static class ServizioIncontri
                 else if (t == '2') stato = StatoMenu.Inventario_Supporti;
                 else if (t == '3') stato = StatoMenu.Inventario_Offensivi;
                 else if (t == 'Q' || t == 'q') stato = StatoMenu.Principale;
-
                 continue;
             }
 
@@ -380,10 +379,10 @@ public static class ServizioIncontri
         return new string('█', pieni) + new string('░', vuoti);
     }
 
-    static void MostraMessaggioFinale(string messaggio)
+    static void MostraMessaggioFinale(string messaggio, Personaggio personaggio)
     {
         Console.Clear();
-
+        DisegnaGiocatore(personaggio);
         int centerX = Console.WindowWidth / 2 - messaggio.Length / 2;
         int centerY = Console.WindowHeight / 2;
 

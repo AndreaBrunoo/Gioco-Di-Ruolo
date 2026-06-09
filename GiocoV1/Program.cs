@@ -12,6 +12,7 @@ class Program
     // FARE IN MODO CHE IL PERSONAGGIO IMPOSTI LA SUA PRIMA MOSSA TRAMITE TUTORIAL PER ORA è AUTOMATICO
     // IMPOSTARE UN ARMA PREDEFINITA TRAMITE CLASSE PERSONAGGIO
     // AGGIUNGERE L'OPZIONE INVENTARIO DURANTE IL COMBATTIMENTO
+    // AGGIUNGERE LA DIVISIONE DELL'INVENTARIO NEL MENU
 
     // Appunti
 
@@ -31,10 +32,25 @@ class Program
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("=== MENU INIZIALE ===");
-                Console.WriteLine("[1] Nuova Partita");
-                Console.WriteLine("[2] Carica Partita");
-                Console.Write("[3] Chiudi");
+                string[] righe =
+                {
+                    "=== MENU INIZIALE ===",
+                    "",
+                    "[1] Nuova Partita",
+                    "[2] Carica Partita",
+                    "[3] Chiudi "
+                };
+
+                int centerY = Console.WindowHeight / 2 - righe.Length / 2;
+
+                for (int i = 0; i < righe.Length; i++)
+                {
+                    string riga = righe[i];
+                    int centerX = Console.WindowWidth / 2 - riga.Length / 2;
+
+                    Console.SetCursorPosition(centerX, centerY + i);
+                    Console.Write(riga);
+                }
 
                 char scelta = Console.ReadKey(true).KeyChar;
                 Console.Clear();
@@ -42,7 +58,8 @@ class Program
                 if (scelta == '1')
                 {
                     Console.Clear();
-                    Console.Write("Iniziare nuova partita? ");
+                    MostraMessaggioCentratoWrite("Iniziare nuova partita?");
+
                     bool decisioneInizio = TastiSiENo();
                     if (decisioneInizio)
                     {
@@ -68,7 +85,6 @@ class Program
     static StatoGioco NuovaPartita()
     {
         Console.Clear();
-
         // 1) CREAZIONE MAPPA
         var mappa = ServizioMappa.CaricaMappa("Mappa_principale.json");
         var sezione = mappa.Sezioni.FirstOrDefault(s => s.Nome == "Foresta Tutorial") ?? mappa.Sezioni.First();
@@ -79,7 +95,7 @@ class Program
         string nome;
         do
         {
-            Console.Write("Scrivi il nome del tuo personaggio: ");
+            MostraMessaggioCentratoWrite("Scrivi il nome del tuo personaggio: ");
             nome = Console.ReadLine()!.Trim();
             if (!string.IsNullOrEmpty(nome))
                 nome = char.ToUpper(nome[0]) + nome.Substring(1).ToLower();
@@ -117,7 +133,7 @@ class Program
                 {
                     Oggetto = new Oggetto
                     {
-                        Nome = "Pozione",
+                        Nome = "Birra",
                         Categoria = CategoriaOggetto.Consumabile,
                     },
                     Quantita = 1
@@ -137,10 +153,30 @@ class Program
         while (deciso)
         {
             Console.Clear();
-            Console.WriteLine("Scegli una classe:");
+            ServizioIncontri.DisegnaGiocatore(personaggio);
 
+            string titolo = "Classi disponibili:";
+            int centerY = Console.WindowHeight / 2 - (servizioClassi.ClassiDisponibili.Count + 3) / 2;
+
+            // Titolo centrato
+            int tx = Console.WindowWidth / 2 - titolo.Length / 2;
+            Console.SetCursorPosition(tx, centerY);
+            Console.WriteLine(titolo);
+
+            // Lista classi centrata
             for (int i = 0; i < servizioClassi.ClassiDisponibili.Count; i++)
-                Console.WriteLine($"{i + 1}) {servizioClassi.ClassiDisponibili[i].Nome}");
+            {
+                string riga = $"{i + 1}) {servizioClassi.ClassiDisponibili[i].Nome}";
+                int x = Console.WindowWidth / 2 - riga.Length / 2;
+                Console.SetCursorPosition(x, centerY + 2 + i);
+                Console.WriteLine(riga);
+            }
+
+            // Prompt
+            string prompt = "Seleziona una classe ";
+            int px = Console.WindowWidth / 2 - prompt.Length / 2;
+            Console.SetCursorPosition(px, centerY + servizioClassi.ClassiDisponibili.Count + 4);
+            Console.Write(prompt);
 
             char sceltaClasseChar = Console.ReadKey(true).KeyChar;
 
@@ -152,12 +188,30 @@ class Program
                 while (true)
                 {
                     Console.Clear();
+                    ServizioIncontri.DisegnaGiocatore(personaggio);
+
                     var classeSelezionata = servizioClassi.ClassiDisponibili[sceltaClasseInt - 1];
 
-                    Console.WriteLine($"{classeSelezionata.Nome}");
-                    Console.WriteLine($"Statistiche iniziali: {classeSelezionata.Salute} HP, {classeSelezionata.Attacco} ATK, {classeSelezionata.Difesa} DEF, {classeSelezionata.Velocita} VEL");
-                    Console.WriteLine();
-                    Console.Write("[E] Conferma  [Q] Indietro");
+                    string nomeClasse = classeSelezionata.Nome;
+                    string stats = $"HP {classeSelezionata.Salute} | ATK {classeSelezionata.Attacco} | DEF {classeSelezionata.Difesa} | VEL {classeSelezionata.Velocita}";
+                    string conferma = "[E] Conferma   [Q] Indietro";
+
+                    int cy = Console.WindowHeight / 2;
+
+                    // Nome classe
+                    int nx = Console.WindowWidth / 2 - nomeClasse.Length / 2;
+                    Console.SetCursorPosition(nx, cy - 2);
+                    Console.WriteLine(nomeClasse);
+
+                    // Statistiche
+                    int sx = Console.WindowWidth / 2 - stats.Length / 2;
+                    Console.SetCursorPosition(sx, cy);
+                    Console.WriteLine(stats);
+
+                    // Prompt conferma
+                    int cx = Console.WindowWidth / 2 - conferma.Length / 2;
+                    Console.SetCursorPosition(cx, cy + 2);
+                    Console.Write(conferma);
 
                     char decisione = Console.ReadKey(true).KeyChar;
 
@@ -165,7 +219,7 @@ class Program
                     {
                         servizioClassi.ApplicaClasse(personaggio, classeSelezionata);
                         Console.Clear();
-                        Console.WriteLine($"{nome} hai scelto: {classeSelezionata.Nome}");
+                        MostraMessaggioConUI(personaggio, $"{personaggio.Nome}, hai scelto: {classeSelezionata.Nome}");
                         deciso = false;
                         break;
                     }
@@ -174,7 +228,6 @@ class Program
                 }
             }
         }
-        TastoAvanti();
 
         // CREA LO STATO DI GIOCO
         return new StatoGioco
@@ -189,6 +242,7 @@ class Program
     static void SchermataBenvenuto(Personaggio personaggio)
     {
         Console.Clear();
+        ServizioIncontri.DisegnaGiocatore(personaggio);
 
         string titolo = "PROJECT FRONTIER";
         int larghezza = 50;
@@ -197,33 +251,31 @@ class Program
         string bordoMid = "╠" + new string('═', larghezza) + "╣";
         string bordoBottom = "╚" + new string('═', larghezza) + "╝";
 
-        // Centra il titolo
-        int spazi = (larghezza - titolo.Length) / 2;
-        string rigaTitolo = "║" + new string(' ', spazi) + titolo + new string(' ', larghezza - titolo.Length - spazi) + "║";
-
-        Console.WriteLine(bordoTop);
-        Console.WriteLine(rigaTitolo);
-        Console.WriteLine(bordoMid);
-
-        Console.WriteLine($"║ Benvenuto, {personaggio.Nome}!".PadRight(larghezza + 1) + "║");
-        Console.WriteLine($"║ Il tuo viaggio sta per iniziare...".PadRight(larghezza + 1) + "║");
-        Console.WriteLine($"║".PadRight(larghezza + 1) + "║");
-        Console.WriteLine($"║ • Esplora terre misteriose".PadRight(larghezza + 1) + "║");
-        Console.WriteLine($"║ • Affronta creature sconosciute".PadRight(larghezza + 1) + "║");
-        Console.WriteLine($"║ • Cresci, combatti, sopravvivi".PadRight(larghezza + 1) + "║");
-        Console.WriteLine($"║".PadRight(larghezza + 1) + "║");
-        Console.WriteLine($"║ Preparati, avventuriero...".PadRight(larghezza + 1) + "║");
-
-        Console.WriteLine(bordoBottom);
-
-        Console.WriteLine();
-        Console.Write("[E] Continua");
-
-        while (true)
+        List<string> righe = new()
         {
-            char c = Console.ReadKey(true).KeyChar;
-            if (c == 'E' || c == 'e') break;
+            bordoTop,
+            "║" + titolo.PadLeft((larghezza + titolo.Length) / 2).PadRight(larghezza) + "║",
+            bordoMid,
+            $"║ Benvenuto, {personaggio.Nome}!{"".PadRight(larghezza - ($" Benvenuto, {personaggio.Nome}!").Length)}║",
+            $"║ Il tuo viaggio sta per iniziare...".PadRight(larghezza + 1) + "║",
+            $"║".PadRight(larghezza + 1) + "║",
+            $"║ • Esplora terre misteriose".PadRight(larghezza + 1) + "║",
+            $"║ • Affronta creature sconosciute".PadRight(larghezza + 1) + "║",
+            $"║ • Cresci, combatti, sopravvivi".PadRight(larghezza + 1) + "║",
+            $"║".PadRight(larghezza + 1) + "║",
+            $"║ Preparati, avventuriero...".PadRight(larghezza + 1) + "║",
+            bordoBottom
+        };
+        int startY = Console.WindowHeight / 2 - righe.Count / 2;
+
+        for (int i = 0; i < righe.Count; i++)
+        {
+            string riga = righe[i];
+            int x = Console.WindowWidth / 2 - (riga.Length / 2);
+            Console.SetCursorPosition(x, startY + i);
+            Console.Write(riga);
         }
+        TastoAvanti();
     }
 
     // ============================
@@ -232,23 +284,48 @@ class Program
     static StatoGioco MenuCaricamento(ServizioSalvataggio salvataggio)
     {
         var files = salvataggio.ElencaSalvataggi();
-
         if (files.Count == 0)
         {
-            Console.WriteLine("Nessun salvataggio trovato.");
+            MostraMessaggioCentratoWriteLine("Nessun salvataggio trovato.");
             TastoIndietro();
             return null;
         }
 
-        Console.WriteLine("=== SCEGLI UN SALVATAGGIO ===");
-
-        for (int i = 0; i < files.Count; i++)
-            Console.WriteLine($"[{i + 1}] {Path.GetFileName(files[i])}");
-
-        Console.WriteLine("[Q] Indietro");
-
         while (true)
         {
+            Console.Clear();
+            string testo = "[Q] Indietro";
+
+            int posX = Console.WindowWidth - testo.Length - 2;
+            int posY = Console.WindowHeight - 2;
+
+            Console.SetCursorPosition(posX, posY);
+            Console.Write(testo);
+
+            List<string> righe = new();
+            righe.Add("=== SALVATAGGI ===");
+            righe.Add("");
+
+            for (int i = 0; i < files.Count; i++)
+                righe.Add($"[{i + 1}] {Path.GetFileName(files[i])}");
+
+            int startY = Console.WindowHeight / 2 - righe.Count / 2;
+
+            for (int i = 0; i < righe.Count; i++)
+            {
+                string riga = righe[i];
+                int x = Console.WindowWidth / 2 - riga.Length / 2;
+                Console.SetCursorPosition(x, startY + i);
+                Console.Write(riga);
+            }
+
+            string prompt = "Seleziona un salvataggio: ";
+            int px = Console.WindowWidth / 2 - prompt.Length / 2;
+            int py = startY + righe.Count + 2;
+
+            Console.SetCursorPosition(px, py);
+            Console.Write(prompt);
+
             char scelta = Console.ReadKey(true).KeyChar;
 
             if (scelta == 'q' || scelta == 'Q')
@@ -275,6 +352,9 @@ class Program
         var mappa = ServizioMappa.CaricaMappa("Mappa_principale.json");
         // 🔹 Carico le mosse
         ServizioMosse.CaricaMosse("Mosse.json");
+        // 🔹 Carico gli oggetti
+        ServizioOggetti.CaricaOggettiPerCategoria("Oggetti.json");
+        ServizioOggetti.CaricaTuttiOggetti();
         // 🔹 Carico i nemici
         var configNemici = ServizioNemici.CaricaNemici("Nemici.json");
         // 🔹 Assegno le mosse e gli oggetti ai nemici
@@ -289,12 +369,32 @@ class Program
         var cellaIniziale = griglia[personaggio.PosY, personaggio.PosX];
 
         Console.Clear();
-        Console.WriteLine($"Ti trovi nella {cellaIniziale!.Nome}. {cellaIniziale.Descrizione}");
-        Console.WriteLine();
+        DisegnaMiniMappa(griglia, personaggio.PosX, personaggio.PosY);
+        string[] righe =
+        {
+            $"Ti trovi nella {cellaIniziale!.Nome}.",
+            $"{cellaIniziale.Descrizione}"
+        };
+
+        int centerY = Console.WindowHeight / 2 - righe.Length / 2;
+        for (int i = 0; i < righe.Length; i++)
+        {
+            string riga = righe[i];
+            int centerX = Console.WindowWidth / 2 - riga.Length / 2;
+            Console.SetCursorPosition(centerX, centerY + i);
+            Console.Write(riga);
+        }
 
         while (true)
         {
-            Console.Write("[R] Menù  [W] Su  [S] Giù  [A] Sinistra  [D] Destra");
+            ServizioIncontri.DisegnaGiocatore(personaggio);
+            string testo = "[R] Menù  [W] Su  [S] Giù  [A] Sinistra  [D] Destra";
+
+            int posX = Console.WindowWidth - testo.Length - 2; // margine di 2
+            int posY = Console.WindowHeight - 2; // penultima riga
+
+            Console.SetCursorPosition(posX, posY);
+            Console.Write(testo);
             char direzione = Console.ReadKey(true).KeyChar;
             Console.Clear();
             if (direzione == 'r' || direzione == 'R')
@@ -303,30 +403,88 @@ class Program
                 if (!continua) return;
             }
             var risultato = movimento.Muovi(personaggio, direzione, sezione, configNemici);
-            Console.WriteLine(risultato.Messaggio);
-            Console.WriteLine();
+            
+            // ⭐ CAMBIO SEZIONE SE SERVE
+            if (risultato.Collegamento != null)
+            {
+                var areaCollegata = risultato.Collegamento;
+
+                stato.AreaCorrente = areaCollegata.Sezione;
+                personaggio.PosX = areaCollegata.X;
+                personaggio.PosY = areaCollegata.Y;
+
+                sezione = mappa.Sezioni.First(s => s.Nome == areaCollegata.Sezione);
+                griglia = ServizioMappa.CreaGriglia(sezione);
+                movimento = new ServizioMovimento(griglia);
+
+                Console.Clear();
+                DisegnaMiniMappa(griglia, personaggio.PosX, personaggio.PosY);
+
+                string[] righeCambio =
+                {
+                    $"Sei entrato in {areaCollegata.Sezione}.",
+                    $"Una nuova area da esplorare."
+                };
+
+                int cambioY = Console.WindowHeight / 2 - righeCambio.Length / 2;
+                for (int i = 0; i < righeCambio.Length; i++)
+                {
+                    string riga = righeCambio[i];
+                    int cambioX = Console.WindowWidth / 2 - riga.Length / 2;
+                    Console.SetCursorPosition(cambioX, cambioY + i);
+                    Console.Write(riga);
+                }
+                continue;
+            }
+
+            DisegnaMiniMappa(griglia, personaggio.PosX, personaggio.PosY);
+            string[] righeRisultato =
+            {
+                $"{risultato.Messaggio1}.",
+                $"{risultato.Descrizione}"
+            };
+
+            int centerYRisultato = Console.WindowHeight / 2 - righeRisultato.Length / 2;
+            for (int i = 0; i < righeRisultato.Length; i++)
+            {
+                string riga = righeRisultato[i];
+                int centerXRisultato = Console.WindowWidth / 2 - riga.Length / 2;
+                Console.SetCursorPosition(centerXRisultato, centerYRisultato + i);
+                Console.Write(riga);
+            }
+
             if (risultato.NemicoTrovato != null)
             {
                 var esito = ServizioIncontri.Incontro(personaggio, risultato.NemicoTrovato);
                 if (risultato.NemicoTrovato is Nemico nemico)
                 {
                     if (esito == EsitoIncontro.Vittoria)
-                    {
                         ServizioDrop.ApplicaDrop(personaggio, nemico, esito);
+
+                    DisegnaMiniMappa(griglia, personaggio.PosX, personaggio.PosY);
+
+                    for (int i = 0; i < righeRisultato.Length; i++)
+                    {
+                        string riga = righeRisultato[i];
+                        int centerXRisultato = Console.WindowWidth / 2 - riga.Length / 2;
+                        Console.SetCursorPosition(centerXRisultato, centerYRisultato + i);
+                        Console.Write(riga);
                     }
                 }
-                /*else if (esito == EsitoIncontro.Sconfitta)
+
+                if (esito == EsitoIncontro.Sconfitta)
                 {
-                    // Opzione A: ritorni al checkpoint
+                    /* Opzione A: ritorni al checkpoint
                     personaggio.PosX = stato.CheckpointX;
                     personaggio.PosY = stato.CheckpointY;
+                    */
                     personaggio.SaluteAttuale = personaggio.SaluteMassima;
 
                     // Opzione B: torni al menu principale
                     // return;
 
                     continue;
-                }*/
+                }
             }
         }
     }
@@ -444,7 +602,41 @@ class Program
     // ------------------------------
     //  UI DINAMICA
     // ------------------------------
-    static void MostraMessaggio(Personaggio personaggio, string messaggio)
+    public static void DisegnaMiniMappa(Cella?[,] griglia, int px, int py)
+    {
+        const int raggio = 2; // 5x5
+
+        for (int dy = -raggio; dy <= raggio; dy++)
+        {
+            for (int dx = -raggio; dx <= raggio; dx++)
+            {
+                int x = px + dx;
+                int y = py + dy;
+
+                Console.SetCursorPosition(0 + (dx + raggio) * 2, 0 + (dy + raggio));
+
+                if (x == px && y == py)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("● ");
+                    Console.ResetColor();
+                }
+                else if (y >= 0 && y < griglia.GetLength(0) &&
+                         x >= 0 && x < griglia.GetLength(1) &&
+                         griglia[y, x] != null)
+                {
+                    Console.Write("■ ");
+                }
+                else
+                {
+                    Console.Write("□ ");
+                }
+            }
+            Console.WriteLine();
+        }
+    }
+
+    static void MostraMessaggioConUI(Personaggio personaggio, string messaggio)
     {
         // 1) Ridisegna tutta la UI
         Console.Clear();
@@ -463,26 +655,56 @@ class Program
         ServizioIncontri.DisegnaGiocatore(personaggio);
     }
 
+    public static void MostraMessaggioCentratoWrite(string messaggio)
+    {
+        int x = Console.WindowWidth / 2 - messaggio.Length / 2;
+        int y = Console.WindowHeight / 2;
+
+        Console.SetCursorPosition(x, y);
+        Console.Write(messaggio);
+    }
+
+    public static void MostraMessaggioCentratoWriteLine(string messaggio)
+    {
+        int x = Console.WindowWidth / 2 - messaggio.Length / 2;
+        int y = Console.WindowHeight / 2;
+
+        Console.SetCursorPosition(x, y);
+        Console.WriteLine(messaggio);
+    }
+
     // ============================
     //       UTILITY
     // ============================
     static bool TastiSiENo()
     {
-        Console.WriteLine();
-        Console.Write("[E] Si  [Q] No");
+        string testo = "[E] Si  [Q] No";
+
+        int posX = Console.WindowWidth - testo.Length - 2;
+        int posY = Console.WindowHeight - 2;
+
+        Console.SetCursorPosition(posX, posY);
+        Console.Write(testo);
+
         while (true)
         {
             char t = Console.ReadKey(true).KeyChar;
             if (t == 'E' || t == 'e')
-                return true;  // avanti
+                return true;
             if (t == 'Q' || t == 'q')
-                return false; // indietro
+                return false;
         }
     }
     static void TastoIndietro()
     {
-        Console.WriteLine();
-        Console.Write("[Q] Indietro");
+        string testo = "[Q] Indietro";
+
+        int posX = Console.WindowWidth - testo.Length - 2;
+        int posY = Console.WindowHeight - 2;
+
+        Console.SetCursorPosition(posX, posY);
+        Console.Write(testo);
+
         while (true)
         {
             char e = Console.ReadKey(true).KeyChar;
