@@ -9,5 +9,6 @@ public class Oggetto
     public int BonusDifesa { get; set; }
     public int BonusVelocita { get; set; }
     public int BonusSalute { get; set; }
+    public int ProbabilitaDrop { get; set; }
     public CategoriaOggetto Categoria { get; set; }
 }

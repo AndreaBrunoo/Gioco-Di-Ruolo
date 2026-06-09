@@ -13,6 +13,8 @@ public class Personaggio
     public List<OggettoInventario> Inventario { get; set; } = new();
     public Equipaggiamento Equipaggiamenti { get; set; } = new();
     public int Monete { get; set; } = 0;
+    public int PuntiAbilita { get; set; } = 0;
+
     public int PosX { get; set; }
     public int PosY { get; set; }
 }

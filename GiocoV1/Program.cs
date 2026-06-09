@@ -277,8 +277,9 @@ class Program
         ServizioMosse.CaricaMosse("Mosse.json");
         // 🔹 Carico i nemici
         var configNemici = ServizioNemici.CaricaNemici("Nemici.json");
-        // 🔹 Assegno le mosse ai nemici
-        ServizioNemici.AssegnaMosse(configNemici, new ServizioMosse());
+        // 🔹 Assegno le mosse e gli oggetti ai nemici
+        ServizioNemici.AssegnaMosse(configNemici);
+        ServizioNemici.AssegnaOggetti(configNemici);
         // 🔹 Trovo la sezione corretta
         var sezione = mappa.Sezioni.First(s => s.Nome == stato.AreaCorrente);
         // 🔹 Creo la griglia per il movimento
@@ -306,7 +307,26 @@ class Program
             Console.WriteLine();
             if (risultato.NemicoTrovato != null)
             {
-                ServizioIncontri.Incontro(personaggio, risultato.NemicoTrovato);
+                var esito = ServizioIncontri.Incontro(personaggio, risultato.NemicoTrovato);
+                if (risultato.NemicoTrovato is Nemico nemico)
+                {
+                    if (esito == EsitoIncontro.Vittoria)
+                    {
+                        ServizioDrop.ApplicaDrop(personaggio, nemico, esito);
+                    }
+                }
+                /*else if (esito == EsitoIncontro.Sconfitta)
+                {
+                    // Opzione A: ritorni al checkpoint
+                    personaggio.PosX = stato.CheckpointX;
+                    personaggio.PosY = stato.CheckpointY;
+                    personaggio.SaluteAttuale = personaggio.SaluteMassima;
+
+                    // Opzione B: torni al menu principale
+                    // return;
+
+                    continue;
+                }*/
             }
         }
     }

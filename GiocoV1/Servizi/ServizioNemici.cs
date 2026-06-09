@@ -32,7 +32,7 @@ public static class ServizioNemici
     // ---------------------------------------------------------
     // ASSEGNA LE MOSSE AI NEMICI E AI BOSS
     // ---------------------------------------------------------
-    public static void AssegnaMosse(ConfigNemici configurazioneNemici, ServizioMosse servizioMosse)
+    public static void AssegnaMosse(ConfigNemici configurazioneNemici)
     {
         foreach (var sezione in configurazioneNemici.Sezioni.Values)
         {
@@ -59,6 +59,54 @@ public static class ServizioNemici
                     var mossa = ServizioMosse.OttieniMossaTramiteNome(nome);
                     if (mossa != null)
                         sezione.Boss.Mosse.Add(mossa);
+                }
+            }
+        }
+    }
+
+    // ---------------------------------------------------------
+    // ASSEGNA GLI OGGETTI AI NEMICI E AI BOSS
+    // ---------------------------------------------------------
+    public static void AssegnaOggetti(ConfigNemici configurazioneNemici)
+    {
+        foreach (var sezione in configurazioneNemici.Sezioni.Values)
+        {
+            // NEMICI NORMALI
+            foreach (var nemico in sezione.Nemici)
+            {
+                nemico.Inventario = new List<OggettoInventario>();
+
+                foreach (var item in nemico.NomiOggetti)
+                {
+                    var oggetto = ServizioOggetti.OttieniOggettoTramiteNome(item.Nome);
+                    if (oggetto != null)
+                    {
+                        nemico.Inventario.Add(new OggettoInventario
+                        {
+                            Oggetto = oggetto,
+                            Quantita = item.Quantita
+                        });
+                    }
+                }
+            }
+
+            // BOSS
+            if (sezione.Boss != null)
+            {
+                var boss = sezione.Boss;
+                boss.Inventario = new List<OggettoInventario>();
+
+                foreach (var item in boss.NomiOggetti)
+                {
+                    var oggetto = ServizioOggetti.OttieniOggettoTramiteNome(item.Nome);
+                    if (oggetto != null)
+                    {
+                        boss.Inventario.Add(new OggettoInventario
+                        {
+                            Oggetto = oggetto,
+                            Quantita = item.Quantita
+                        });
+                    }
                 }
             }
         }
@@ -121,7 +169,8 @@ public static class ServizioNemici
             Velocita = nemico.Velocita,
             Livello = nemico.Livello,
             ProbabilitaSpawn = nemico.ProbabilitaSpawn,
-            Mosse = new List<Mossa>(nemico.Mosse)
+            Mosse = new List<Mossa>(nemico.Mosse),
+            Inventario = new List<OggettoInventario>(nemico.Inventario)
         };
     }
 
@@ -139,7 +188,7 @@ public static class ServizioNemici
             Velocita = boss.Velocita,
             Livello = boss.Livello,
             Mosse = new List<Mossa>(boss.Mosse),
-            Inventario = new List<Oggetto>(boss.Inventario)
+            Inventario = new List<OggettoInventario>(boss.Inventario)
         };
     }
 }

@@ -2,7 +2,12 @@
   "Sezioni": {
     "Foresta Tutorial": {
       "ProbabilitaSpawn": 40,
-      "CelleBoss": [ { "X": 8, "Y": 8 } ],
+      "CelleBoss": [
+        {
+          "X": 8,
+          "Y": 8
+        }
+      ],
       "Nemici": [
         {
           "Nome": "Lupo",
@@ -12,7 +17,19 @@
           "Difesa": 2,
           "Velocita": 3,
           "Livello": 1,
-          "NomiMosse": ["Frustata"]
+          "NomiMosse": [
+            "Frustata"
+          ],
+          "Inventario": [
+            {
+              "Nome": "Pozione Curativa",
+              "Quantita": 5
+            },
+            {
+              "Nome": "Dente di Lupo",
+              "Quantita": 5
+            }
+          ]
         },
         {
           "Nome": "Goblin",
@@ -22,7 +39,15 @@
           "Difesa": 1,
           "Velocita": 4,
           "Livello": 1,
-          "NomiMosse": ["Frustata"]
+          "NomiMosse": [
+            "Frustata"
+          ],
+          "Inventario": [
+            {
+              "Nome": "Pozione Curativa",
+              "Quantita": 5
+            }
+          ]
         },
         {
           "Nome": "Ragno Gigante",
@@ -32,7 +57,15 @@
           "Difesa": 3,
           "Velocita": 2,
           "Livello": 2,
-          "NomiMosse": ["Frustata"]
+          "NomiMosse": [
+            "Frustata"
+          ],
+          "Inventario": [
+            {
+              "Nome": "Pozione Curativa",
+              "Quantita": 5
+            }
+          ]
         }
       ],
       "Boss": {
@@ -42,7 +75,19 @@
         "Difesa": 5,
         "Velocita": 4,
         "Livello": 5,
-        "NomiMosse": ["Frustata"]
+        "NomiMosse": [
+          "Frustata"
+        ],
+          "Inventario": [
+            {
+              "Nome": "Pozione Curativa",
+              "Quantita": 2
+            },
+            {
+              "Nome": "Dente di Lupo",
+              "Quantita": 5
+            }
+          ]
       }
     }
   }

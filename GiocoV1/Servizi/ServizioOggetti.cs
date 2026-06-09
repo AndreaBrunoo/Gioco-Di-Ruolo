@@ -7,7 +7,7 @@ namespace GiocoV1.Servizi;
 
 public static class ServizioOggetti
 {
-    private static List<Oggetto> _tutti = new();
+    private static List<Oggetto> _oggetti = new();
     public static ConfigOggetti Config { get; private set; } = new();
 
     public static void CaricaOggettiPerCategoria(string percorso)
@@ -30,58 +30,58 @@ public static class ServizioOggetti
     {
         var c = Config;
 
-        _tutti = new List<Oggetto>();
+        _oggetti = new List<Oggetto>();
 
-        // Pozioni
-        foreach (var o in c.Pozioni)
+        // Consumabili
+        foreach (var o in c.Consumabili)
         {
             o.Categoria = CategoriaOggetto.Consumabile;
-            _tutti.Add(o);
+            _oggetti.Add(o);
         }
 
         // Offensivi
         foreach (var o in c.Offensivi)
         {
             o.Categoria = CategoriaOggetto.Offensivo;
-            _tutti.Add(o);
+            _oggetti.Add(o);
         }
 
         // Materiali
         foreach (var o in c.Materiali)
         {
             o.Categoria = CategoriaOggetto.Materiale;
-            _tutti.Add(o);
+            _oggetti.Add(o);
         }
 
         // Equipaggiamenti
         foreach (var o in c.Equipaggiamenti.Elmi)
         {
             o.Categoria = CategoriaOggetto.Elmo;
-            _tutti.Add(o);
+            _oggetti.Add(o);
         }
 
         foreach (var o in c.Equipaggiamenti.Corazze)
         {
             o.Categoria = CategoriaOggetto.Corazza;
-            _tutti.Add(o);
+            _oggetti.Add(o);
         }
 
         foreach (var o in c.Equipaggiamenti.Gambali)
         {
             o.Categoria = CategoriaOggetto.Gambali;
-            _tutti.Add(o);
+            _oggetti.Add(o);
         }
 
         foreach (var o in c.Equipaggiamenti.Stivali)
         {
             o.Categoria = CategoriaOggetto.Stivali;
-            _tutti.Add(o);
+            _oggetti.Add(o);
         }
 
         foreach (var o in c.Equipaggiamenti.Armi)
         {
             o.Categoria = CategoriaOggetto.Arma;
-            _tutti.Add(o);
+            _oggetti.Add(o);
         }
     }
 
@@ -159,5 +159,12 @@ public static class ServizioOggetti
         });
 
         personaggio.Equipaggiamenti.Set(categoria, null);
+    }
+    
+    public static Oggetto? OttieniOggettoTramiteNome(string nome)
+    {
+        return _oggetti
+            .FirstOrDefault(o =>
+                o.Nome.Equals(nome, StringComparison.OrdinalIgnoreCase));
     }
 }

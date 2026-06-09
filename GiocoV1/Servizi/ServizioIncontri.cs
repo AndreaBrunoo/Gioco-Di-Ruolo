@@ -184,11 +184,7 @@ public static class ServizioIncontri
                 if (personaggio.Velocita >= nemico.Velocita)
                 {
                     EseguiAttacco(personaggio, nemico, mossaScelta);
-                    if (nemico.SaluteAttuale <= 0)
-                    {
-                        MostraMessaggioFinale($"Hai sconfitto {nemico.Nome}!");
-                        return EsitoIncontro.Vittoria;
-                    }
+                    if (nemico.SaluteAttuale <= 0) return EsitoIncontro.Vittoria;
 
                     var mossaNemico = ScegliMossaNemico(nemico);
                     EseguiAttacco(nemico, personaggio, mossaNemico);
@@ -209,13 +205,9 @@ public static class ServizioIncontri
                     }
 
                     EseguiAttacco(personaggio, nemico, mossaScelta);
-                    if (nemico.SaluteAttuale <= 0)
-                    {
-                        MostraMessaggioFinale($"Hai sconfitto {nemico.Nome}!");
-                        return EsitoIncontro.Vittoria;
-                    }
+                    if (nemico.SaluteAttuale <= 0) return EsitoIncontro.Vittoria;
                 }
-
+                
                 continue;
             }
 

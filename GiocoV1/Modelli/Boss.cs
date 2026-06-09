@@ -1,3 +1,5 @@
+using GiocoV1.Dtos;
+
 namespace GiocoV1.Modelli;
 
 public class Boss : Entita
@@ -14,6 +16,8 @@ public class Boss : Entita
     // Mosse reali assegnate dal ServizioNemici
     public List<Mossa> Mosse { get; set; } = new();
     
-    public List<Oggetto> Inventario { get; set; } = new();
+    public List<OggettoInventario> Inventario { get; set; } = new();
+    public List<OggettoInventarioJson> NomiOggetti { get; set; } = new();
+
     public bool Sconfitto { get; set; } = false; // per non respawnare
 }

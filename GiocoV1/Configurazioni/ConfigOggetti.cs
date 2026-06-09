@@ -4,7 +4,7 @@ namespace GiocoV1.Configurazioni;
 
 public class ConfigOggetti
 {
-    public List<Oggetto> Pozioni { get; set; } = new();
+    public List<Oggetto> Consumabili { get; set; } = new();
     public List<Oggetto> Offensivi { get; set; } = new();
     public List<Oggetto> Materiali { get; set; } = new();
 
