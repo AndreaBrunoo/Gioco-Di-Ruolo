@@ -3,7 +3,6 @@ using GiocoV1.Servizi;
 using GiocoV1.Configurazioni;
 using GiocoV1.Dtos;
 using GiocoV1.Enum;
-using System.Runtime.CompilerServices;
 
 class Program
 {
