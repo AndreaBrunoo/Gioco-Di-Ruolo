@@ -3,6 +3,7 @@ using GiocoV1.Servizi;
 using GiocoV1.Configurazioni;
 using GiocoV1.Dtos;
 using GiocoV1.Enum;
+using System.Runtime.CompilerServices;
 
 class Program
 {
@@ -34,23 +35,13 @@ class Program
                 Console.Clear();
                 string[] righe =
                 {
-                    "=== MENU INIZIALE ===",
+                    "===== MENU INIZIALE =====",
                     "",
                     "[1] Nuova Partita",
                     "[2] Carica Partita",
                     "[3] Chiudi "
                 };
-
-                int centerY = Console.WindowHeight / 2 - righe.Length / 2;
-
-                for (int i = 0; i < righe.Length; i++)
-                {
-                    string riga = righe[i];
-                    int centerX = Console.WindowWidth / 2 - riga.Length / 2;
-
-                    Console.SetCursorPosition(centerX, centerY + i);
-                    Console.Write(riga);
-                }
+                CicloForPerStampaCentrale(righe);
 
                 char scelta = Console.ReadKey(true).KeyChar;
                 Console.Clear();
@@ -294,16 +285,8 @@ class Program
         while (true)
         {
             Console.Clear();
-            string testo = "[Q] Indietro";
-
-            int posX = Console.WindowWidth - testo.Length - 2;
-            int posY = Console.WindowHeight - 2;
-
-            Console.SetCursorPosition(posX, posY);
-            Console.Write(testo);
-
             List<string> righe = new();
-            righe.Add("=== SALVATAGGI ===");
+            righe.Add("===== SALVATAGGI =====");
             righe.Add("");
 
             for (int i = 0; i < files.Count; i++)
@@ -318,14 +301,7 @@ class Program
                 Console.SetCursorPosition(x, startY + i);
                 Console.Write(riga);
             }
-
-            string prompt = "Seleziona un salvataggio: ";
-            int px = Console.WindowWidth / 2 - prompt.Length / 2;
-            int py = startY + righe.Count + 2;
-
-            Console.SetCursorPosition(px, py);
-            Console.Write(prompt);
-
+            StampaTasto("[Q] Indietro");
             char scelta = Console.ReadKey(true).KeyChar;
 
             if (scelta == 'q' || scelta == 'Q')
@@ -370,20 +346,13 @@ class Program
 
         Console.Clear();
         DisegnaMiniMappa(griglia, personaggio.PosX, personaggio.PosY);
+
         string[] righe =
         {
             $"Ti trovi nella {cellaIniziale!.Nome}.",
             $"{cellaIniziale.Descrizione}"
         };
-
-        int centerY = Console.WindowHeight / 2 - righe.Length / 2;
-        for (int i = 0; i < righe.Length; i++)
-        {
-            string riga = righe[i];
-            int centerX = Console.WindowWidth / 2 - riga.Length / 2;
-            Console.SetCursorPosition(centerX, centerY + i);
-            Console.Write(riga);
-        }
+        CicloForPerStampaCentrale(righe);
 
         while (true)
         {
@@ -395,20 +364,20 @@ class Program
 
             Console.SetCursorPosition(posX, posY);
             Console.Write(testo);
+
             char direzione = Console.ReadKey(true).KeyChar;
             Console.Clear();
             if (direzione == 'r' || direzione == 'R')
             {
-                bool continua = Menu(personaggio, stato);
+                bool continua = Menu(personaggio, stato, griglia);
                 if (!continua) return;
             }
             var risultato = movimento.Muovi(personaggio, direzione, sezione, configNemici);
-            
+
             // ⭐ CAMBIO SEZIONE SE SERVE
             if (risultato.Collegamento != null)
             {
                 var areaCollegata = risultato.Collegamento;
-
                 stato.AreaCorrente = areaCollegata.Sezione;
                 personaggio.PosX = areaCollegata.X;
                 personaggio.PosY = areaCollegata.Y;
@@ -425,15 +394,7 @@ class Program
                     $"Sei entrato in {areaCollegata.Sezione}.",
                     $"Una nuova area da esplorare."
                 };
-
-                int cambioY = Console.WindowHeight / 2 - righeCambio.Length / 2;
-                for (int i = 0; i < righeCambio.Length; i++)
-                {
-                    string riga = righeCambio[i];
-                    int cambioX = Console.WindowWidth / 2 - riga.Length / 2;
-                    Console.SetCursorPosition(cambioX, cambioY + i);
-                    Console.Write(riga);
-                }
+                CicloForPerStampaCentrale(righeCambio);
                 continue;
             }
 
@@ -443,15 +404,7 @@ class Program
                 $"{risultato.Messaggio1}.",
                 $"{risultato.Descrizione}"
             };
-
-            int centerYRisultato = Console.WindowHeight / 2 - righeRisultato.Length / 2;
-            for (int i = 0; i < righeRisultato.Length; i++)
-            {
-                string riga = righeRisultato[i];
-                int centerXRisultato = Console.WindowWidth / 2 - riga.Length / 2;
-                Console.SetCursorPosition(centerXRisultato, centerYRisultato + i);
-                Console.Write(riga);
-            }
+            CicloForPerStampaCentrale(righeRisultato);
 
             if (risultato.NemicoTrovato != null)
             {
@@ -462,14 +415,7 @@ class Program
                         ServizioDrop.ApplicaDrop(personaggio, nemico, esito);
 
                     DisegnaMiniMappa(griglia, personaggio.PosX, personaggio.PosY);
-
-                    for (int i = 0; i < righeRisultato.Length; i++)
-                    {
-                        string riga = righeRisultato[i];
-                        int centerXRisultato = Console.WindowWidth / 2 - riga.Length / 2;
-                        Console.SetCursorPosition(centerXRisultato, centerYRisultato + i);
-                        Console.Write(riga);
-                    }
+                    CicloForPerStampaCentrale(righeRisultato);
                 }
 
                 if (esito == EsitoIncontro.Sconfitta)
@@ -492,21 +438,28 @@ class Program
     // ============================
     //       MENU DI GIOCO
     // ============================
-    static bool Menu(Personaggio personaggio, StatoGioco stato)
+    static bool Menu(Personaggio personaggio, StatoGioco stato, Cella?[,] griglia)
     {
         while (true)
         {
             Console.Clear();
-            Console.WriteLine("MENÙ");
-            Console.WriteLine("[1] Inventario");
-            Console.WriteLine("[2] Statistiche");
-            Console.WriteLine("[3] Mosse");
-            Console.WriteLine("[4] Mappa");
-            Console.WriteLine("[5] Quest");
-            Console.WriteLine("[6] Salva");
-            Console.WriteLine("[7] Indietro");
-            Console.Write("[8] Esci");
-
+            if (personaggio.Inventario.Count == 0)
+            {
+                MostraMessaggioCentratoWriteLine("L'inventario è vuoto");
+                TastoIndietro();
+                continue;
+            }
+            string[] righeMenu =
+            {
+                "===== MENÙ =====",
+                "",
+                "[1] Inventario   Mappa [4]",
+                "[2] Statistiche   Quest [5]",
+                "[3] Mosse   Salva [6]",
+                "[7] Esci"
+            };
+            CicloForPerStampaCentrale(righeMenu);
+            StampaTasto("[Q] Indietro");
             char scelta = Console.ReadKey(true).KeyChar;
             Console.Clear();
 
@@ -515,23 +468,55 @@ class Program
                 case '1':
                     if (personaggio.Inventario.Count == 0)
                     {
-                        Console.WriteLine("L'inventario è vuoto");
+                        MostraMessaggioCentratoWriteLine("L'inventario è vuoto");
                         TastoIndietro();
                         continue;
                     }
-                    foreach (var oggettoInventario in personaggio.Inventario)
+                    while (true)
                     {
-                        Console.WriteLine($"{oggettoInventario.Quantita}X {oggettoInventario.Oggetto.Nome}");
-                        Console.Write($"ATK +{oggettoInventario.Oggetto.BonusAttacco} ");
-                        Console.Write($"DIF +{oggettoInventario.Oggetto.BonusDifesa} ");
-                        Console.Write($"VEL +{oggettoInventario.Oggetto.BonusVelocita} ");
-                        Console.Write($"HP +{oggettoInventario.Oggetto.BonusSalute} ");
-                        Console.Write($"{oggettoInventario.Oggetto.Categoria}");
+                        string[] righe =
+                        {
+                            "======= INVENTARIO =======",
+                            "",
+                            "[1] Consumabili    Elmi [5]",
+                            "[2] Offensivi    Corazze [6]",
+                            "[3] Materiali    Gambali [7]",
+                            "[4] Armi    Stivali [8]"
+                        };
+                        CicloForPerStampaCentrale(righe);
+                        StampaTasto("[Q] Indietro");
+                        char sceltaInventario = Console.ReadKey(true).KeyChar;
+                        Console.Clear();
+
+                        switch (sceltaInventario)
+                        {
+                            case '1':
+                                continue;
+                            case '2':
+                                continue;
+                            case '3':
+                                continue;
+                            case '4':
+                                continue;
+                            case '5':
+                                continue;
+                            case '6':
+                                continue;
+                            case '7':
+                                continue;
+                            case '8':
+                                continue;
+                            case 'Q': break;
+                            case 'q': break;
+                            default:
+                                continue;
+                        }
+                        break;
                     }
-                    TastoIndietro();
+
                     continue;
                 case '2':
-                    MostraStatistiche(personaggio);
+                    MostraStatistiche(personaggio, griglia);
                     continue;
                 case '3':
                     if (personaggio.Mosse.Count == 0)
@@ -562,17 +547,23 @@ class Program
                     Console.WriteLine($"Salvato il: {DateTime.Now:dd/MM/yyyy HH:mm}");
                     TastoIndietro();
                     continue;
-                case '7': return true;
-                case '8': return false;
+                case '7': return false;
+                case 'Q': return true;
+                case 'q': return true;
             }
         }
     }
 
-    static void MostraStatistiche(Personaggio personaggio)
+    static void MostraStatistiche(Personaggio personaggio, Cella?[,] griglia)
     {
+        DisegnaMiniMappa(griglia, personaggio.PosX, personaggio.PosY);
+        ServizioIncontri.DisegnaGiocatore(personaggio);
+
+        // -------------------------
+        // 1) Calcolo dimensioni box
+        // -------------------------
         int larghezza = 30;
         string titolo = $"PERSONAGGIO: {personaggio.Nome}";
-
         string BordoTop = "╔" + new string('═', larghezza) + "╗";
         string BordoMid = "╠" + new string('═', larghezza) + "╣";
         string BordoBottom = "╚" + new string('═', larghezza) + "╝";
@@ -580,22 +571,57 @@ class Program
         int spazi = (larghezza - titolo.Length) / 2;
         string RigaTitolo = "║" + new string(' ', spazi) + titolo + new string(' ', larghezza - titolo.Length - spazi) + "║";
 
-        Console.WriteLine(BordoTop);
-        Console.WriteLine(RigaTitolo);
-        Console.WriteLine(BordoMid);
+        // -------------------------
+        // 2) Calcolo posizione centrata SOLO per il box
+        // -------------------------
+        int startX = Console.WindowWidth / 2 - (larghezza + 2) / 2;
+        int startY = Console.WindowHeight / 2 - 10;
+        // ↑ 10 è un offset verticale per centrarlo "a occhio"
+        //   puoi aumentare o diminuire questo valore
+
+        void WriteAt(int x, int y, string text)
+        {
+            Console.SetCursorPosition(x, y);
+            Console.Write(text);
+        }
+
+        // -------------------------
+        // 3) Stampa box centrato
+        // -------------------------
+        int r = startY;
+
+        WriteAt(startX, r++, BordoTop);
+        WriteAt(startX, r++, RigaTitolo);
+        WriteAt(startX, r++, BordoMid);
 
         string salute = $"{personaggio.SaluteAttuale}/{personaggio.SaluteMassima}";
-        Console.WriteLine($"{"║",-2}{"Salute",-18}{salute,-11}║");
-        Console.WriteLine($"{"║",-2}{"Attacco",-18}{personaggio.Attacco,-11}║");
-        Console.WriteLine($"{"║",-2}{"Difesa",-18}{personaggio.Difesa,-11}║");
-        Console.WriteLine($"{"║",-2}{"Velocità",-18}{personaggio.Velocita,-11}║");
-        Console.WriteLine($"{"║",-2}{"Esperienza",-18}{personaggio.Esperienza,-11}║");
-        Console.WriteLine($"{"║",-2}{"Livello",-18}{personaggio.Livello,-11}║");
-        Console.WriteLine($"{"║",-2}{"Monete",-18}{personaggio.Monete,-11}║");
-        if (personaggio.Equipaggiamenti.Arma != null)
-            Console.WriteLine($"{"║",-2}{"Arma",-18}{personaggio.Equipaggiamenti.Arma.Oggetto.Nome,-11}║");
 
-        Console.WriteLine(BordoBottom);
+        void Stat(string nome, string valore)
+        {
+            WriteAt(startX, r++, $"║ {nome,-18}{valore,-11}║");
+        }
+
+        Stat("Salute", salute);
+        Stat("Attacco", personaggio.Attacco.ToString());
+        Stat("Difesa", personaggio.Difesa.ToString());
+        Stat("Velocità", personaggio.Velocita.ToString());
+        Stat("Esperienza", personaggio.Esperienza.ToString());
+        Stat("Livello", personaggio.Livello.ToString());
+        Stat("Monete", personaggio.Monete.ToString());
+        Stat("Punti abilità", personaggio.PuntiAbilita.ToString());
+
+        if (personaggio.Equipaggiamenti.Arma != null)
+            Stat("Arma", personaggio.Equipaggiamenti.Arma.Oggetto.Nome);
+        if (personaggio.Equipaggiamenti.Elmo != null)
+            Stat("Elmo", personaggio.Equipaggiamenti.Elmo.Oggetto.Nome);
+        if (personaggio.Equipaggiamenti.Corazza != null)
+            Stat("Corazza", personaggio.Equipaggiamenti.Corazza.Oggetto.Nome);
+        if (personaggio.Equipaggiamenti.Gambali != null)
+            Stat("Gambali", personaggio.Equipaggiamenti.Gambali.Oggetto.Nome);
+        if (personaggio.Equipaggiamenti.Stivali != null)
+            Stat("Stivali", personaggio.Equipaggiamenti.Stivali.Oggetto.Nome);
+
+        WriteAt(startX, r++, BordoBottom);
         TastoIndietro();
     }
 
@@ -673,9 +699,30 @@ class Program
         Console.WriteLine(messaggio);
     }
 
+    public static void CicloForPerStampaCentrale(string[] righe)
+    {
+        int Y = Console.WindowHeight / 2 - righe.Length / 2;
+        for (int i = 0; i < righe.Length; i++)
+        {
+            string riga = righe[i];
+            int X = Console.WindowWidth / 2 - riga.Length / 2;
+
+            Console.SetCursorPosition(X, Y + i);
+            Console.Write(riga);
+        }
+    }
+
     // ============================
     //       UTILITY
     // ============================
+    public static void StampaTasto(string messaggio)
+    {
+        int posX = Console.WindowWidth - messaggio.Length - 2;
+        int posY = Console.WindowHeight - 2;
+
+        Console.SetCursorPosition(posX, posY);
+        Console.Write(messaggio);
+    }
     static bool TastiSiENo()
     {
         string testo = "[E] Si  [Q] No";
@@ -728,3 +775,56 @@ class Program
         }
     }
 }
+/*
+while (true)
+                    {
+                        string[] righe =
+                        {
+                            "======= INVENTARIO =======",
+                            "",
+                            "[1] Consumabili    Elmi [5]",
+                            "[2] Offensivi    Corazze [6]",
+                            "[3] Materiali    Gambali [7]",
+                            "[4] Armi    Stivali [8]"
+                        };
+                        CicloForPerStampaCentrale(righe);
+                        StampaTasto("[Q] Indietro");
+                        char sceltaInventario = Console.ReadKey(true).KeyChar;
+                        Console.Clear();
+
+                        switch (sceltaInventario)
+                        {
+                            case '1':
+                                continue;
+                            case '2':
+                                continue;
+                            case '3':
+                                continue;
+                            case '4':
+                                continue;
+                            case '5':
+                                continue;
+                            case '6':
+                                continue;
+                            case '7':
+                                continue;
+                            case '8':
+                                continue;
+                            case 'Q': break;
+                            case 'q': break;
+                            default:
+                                continue;
+                        }
+                        break;
+                    }
+vorrei che tu mi stampassi i primi 5 consumabili disponibili con affianco il numero, stampa anche due tasti uno avanti e uno indietro e uno esci con questa funzione  static void StampaTasto(string messaggio)
+    {
+        int posX = Console.WindowWidth - messaggio.Length - 2;
+        int posY = Console.WindowHeight - 2;
+
+        Console.SetCursorPosition(posX, posY);
+        Console.Write(messaggio);
+    }
+avanti permette di passare ai prossimi 5 e indietro ai 5 prima, esci invece sarà per tornare al menu 
+Esempio [1] pozione 
+*/
