@@ -8,19 +8,19 @@
     "net10.0": []
   },
   "packageFolders": {
-    "C:\\Users\\sviluppatore\\.nuget\\packages\\": {}
+    "C:\\Users\\User\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\sviluppatore\\Documents\\Gioco\\Gioco-Di-Ruolo\\GiocoV1\\Gioco-di-ruolo.csproj",
+      "projectUniqueName": "C:\\Users\\User\\Documents\\Gioco-di-ruolo\\Gioco-Di-Ruolo\\GiocoV1\\Gioco-di-ruolo.csproj",
       "projectName": "Gioco-di-ruolo",
-      "projectPath": "C:\\Users\\sviluppatore\\Documents\\Gioco\\Gioco-Di-Ruolo\\GiocoV1\\Gioco-di-ruolo.csproj",
-      "packagesPath": "C:\\Users\\sviluppatore\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\sviluppatore\\Documents\\Gioco\\Gioco-Di-Ruolo\\GiocoV1\\obj\\",
+      "projectPath": "C:\\Users\\User\\Documents\\Gioco-di-ruolo\\Gioco-Di-Ruolo\\GiocoV1\\Gioco-di-ruolo.csproj",
+      "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\User\\Documents\\Gioco-di-ruolo\\Gioco-Di-Ruolo\\GiocoV1\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\sviluppatore\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
