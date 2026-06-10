@@ -11,8 +11,10 @@ class Program
     // FARE IL SERVIZIO INCONTRO BOSS
     // FARE IN MODO CHE IL PERSONAGGIO IMPOSTI LA SUA PRIMA MOSSA TRAMITE TUTORIAL PER ORA è AUTOMATICO
     // IMPOSTARE UN ARMA PREDEFINITA TRAMITE CLASSE PERSONAGGIO
-    // AGGIUNGERE L'OPZIONE INVENTARIO DURANTE IL COMBATTIMENTO
-    // AGGIUNGERE LA DIVISIONE DELL'INVENTARIO NEL MENU
+    // FINIRE L'OPZIONE INVENTARIO DURANTE IL COMBATTIMENTO
+    // FINIRE LA DIVISIONE DELL'INVENTARIO NEL MENU
+    // GESTIRE I PUNTI ABILITA
+    // INIZIARE NPC
 
     // Appunti
 
@@ -452,10 +454,10 @@ class Program
             {
                 "===== MENÙ =====",
                 "",
-                "[1] Inventario   Mappa [4]",
-                "[2] Statistiche   Quest [5]",
-                "[3] Mosse   Salva [6]",
-                "[7] Esci"
+                "[1] Inventario   Quest [5]",
+                "[2] Statistiche   Salva [6]",
+                "[3] Mosse   Punti abilità [7]",
+                "[4] Mappa   Esci [8]"
             };
             CicloForPerStampaCentrale(righeMenu);
             StampaTasto("[Q] Indietro");
@@ -467,7 +469,7 @@ class Program
                 case '1':
                     if (personaggio.Inventario.Count == 0)
                     {
-                        MostraMessaggioCentratoWriteLine("L'inventario è vuoto");
+                        MostraMessaggioCentratoWriteLine("L'inventario è vuoto.");
                         TastoIndietro();
                         continue;
                     }
@@ -490,6 +492,7 @@ class Program
                         switch (sceltaInventario)
                         {
                             case '1':
+                                MostraConsumabili(personaggio);
                                 continue;
                             case '2':
                                 continue;
@@ -520,16 +523,20 @@ class Program
                 case '3':
                     if (personaggio.Mosse.Count == 0)
                     {
-                        Console.WriteLine("Non hai mosse disponibili");
+                        MostraMessaggioCentratoWriteLine("Non hai mosse disponibili");
                         TastoIndietro();
                         continue;
                     }
                     foreach (var mossa in personaggio.Mosse)
                     {
-                        Console.WriteLine($"{mossa.Nome}");
-                        Console.Write($"Potenza: {mossa.PotenzaBase} ");
-                        Console.Write($"Precisione: {mossa.PrecisioneBase} ");
-                        Console.Write($"Prob. Crit.: {mossa.ProbabilitaCritico}% ");
+                        int i = 1;
+                        string[] righeMossa =
+                        {
+                            "===== MOSSE =====",
+                            $"[{i}] {mossa.Nome}",
+                        };
+                        i++;
+                        CicloForPerStampaCentrale(righeMossa);
                     }
                     TastoIndietro();
                     continue;
@@ -546,7 +553,8 @@ class Program
                     Console.WriteLine($"Salvato il: {DateTime.Now:dd/MM/yyyy HH:mm}");
                     TastoIndietro();
                     continue;
-                case '7': return false;
+                case '7': 
+                case '8': return false;
                 case 'Q': return true;
                 case 'q': return true;
             }
@@ -692,7 +700,7 @@ class Program
     public static void MostraMessaggioCentratoWriteLine(string messaggio)
     {
         int x = Console.WindowWidth / 2 - messaggio.Length / 2;
-        int y = Console.WindowHeight / 2;
+        int y = Console.CursorTop;
 
         Console.SetCursorPosition(x, y);
         Console.WriteLine(messaggio);
@@ -709,6 +717,93 @@ class Program
             Console.SetCursorPosition(X, Y + i);
             Console.Write(riga);
         }
+    }
+
+    static void MostraConsumabili(Personaggio personaggio)
+    {
+        var consumabili = personaggio.Inventario
+            .Where(i => i.Oggetto.Categoria == CategoriaOggetto.Consumabile)
+            .ToList();
+
+        int pagina = 0;
+        const int perPagina = 5;
+
+        while (true)
+        {
+            Console.Clear();
+            MostraMessaggioCentratoWriteLine("======= CONSUMABILI =======");
+            Console.WriteLine();
+
+            int start = pagina * perPagina;
+            var paginaCorrente = consumabili
+                .Skip(start)
+                .Take(perPagina)
+                .ToList();
+
+            if (paginaCorrente.Count == 0)
+                MostraMessaggioCentratoWriteLine("Nessun consumabile in questa pagina.");
+            else
+            {
+                for (int i = 0; i < paginaCorrente.Count; i++)
+                {
+                    var item = paginaCorrente[i];
+                    int numero = i + 1;
+
+                    string riga = $"[{numero}] X{item.Quantita} {item.Oggetto.Nome}";
+                    MostraMessaggioCentratoWriteLine(riga);
+                }
+            }
+
+            // Paginazione centrata
+            StampaTasto("[F] Precedenti   [E] Prossimi   [Q] Indietro");
+            char scelta = Console.ReadKey(true).KeyChar;
+
+            switch (scelta)
+            {
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                    int index = scelta - '1';
+                    if (index < paginaCorrente.Count)
+                        MostraDettagliOggetto(paginaCorrente[index]);
+                    break;
+
+                case 'E':
+                case 'e':
+                    if ((pagina + 1) * perPagina < consumabili.Count)
+                        pagina++;
+                    break;
+
+                case 'F':
+                case 'f':
+                    if (pagina > 0)
+                        pagina--;
+                    break;
+
+                case 'Q':
+                case 'q':
+                    return;
+
+                default:
+                    continue;
+            }
+        }
+    }
+
+    static void MostraDettagliOggetto(OggettoInventario item)
+    {
+        Console.Clear();
+        MostraMessaggioCentratoWriteLine("===== DETTAGLI OGGETTO =====");
+        Console.WriteLine();
+        MostraMessaggioCentratoWriteLine($"X{item.Quantita} {item.Oggetto.Nome}");
+        MostraMessaggioCentratoWriteLine($"Categoria: {item.Oggetto.Categoria}");
+        MostraMessaggioCentratoWriteLine($"Bonus Attacco: {item.Oggetto.BonusAttacco}");
+        MostraMessaggioCentratoWriteLine($"Bonus Difesa: {item.Oggetto.BonusDifesa}");
+        MostraMessaggioCentratoWriteLine($"Bonus Velocità: {item.Oggetto.BonusVelocita}");
+        MostraMessaggioCentratoWriteLine($"Bonus Salute: {item.Oggetto.BonusSalute}");
+        TastoIndietro();
     }
 
     // ============================
@@ -774,56 +869,3 @@ class Program
         }
     }
 }
-/*
-while (true)
-                    {
-                        string[] righe =
-                        {
-                            "======= INVENTARIO =======",
-                            "",
-                            "[1] Consumabili    Elmi [5]",
-                            "[2] Offensivi    Corazze [6]",
-                            "[3] Materiali    Gambali [7]",
-                            "[4] Armi    Stivali [8]"
-                        };
-                        CicloForPerStampaCentrale(righe);
-                        StampaTasto("[Q] Indietro");
-                        char sceltaInventario = Console.ReadKey(true).KeyChar;
-                        Console.Clear();
-
-                        switch (sceltaInventario)
-                        {
-                            case '1':
-                                continue;
-                            case '2':
-                                continue;
-                            case '3':
-                                continue;
-                            case '4':
-                                continue;
-                            case '5':
-                                continue;
-                            case '6':
-                                continue;
-                            case '7':
-                                continue;
-                            case '8':
-                                continue;
-                            case 'Q': break;
-                            case 'q': break;
-                            default:
-                                continue;
-                        }
-                        break;
-                    }
-vorrei che tu mi stampassi i primi 5 consumabili disponibili con affianco il numero, stampa anche due tasti uno avanti e uno indietro e uno esci con questa funzione  static void StampaTasto(string messaggio)
-    {
-        int posX = Console.WindowWidth - messaggio.Length - 2;
-        int posY = Console.WindowHeight - 2;
-
-        Console.SetCursorPosition(posX, posY);
-        Console.Write(messaggio);
-    }
-avanti permette di passare ai prossimi 5 e indietro ai 5 prima, esci invece sarà per tornare al menu 
-Esempio [1] pozione 
-*/

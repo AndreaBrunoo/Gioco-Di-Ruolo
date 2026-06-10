@@ -207,7 +207,7 @@ public static class ServizioIncontri
                     EseguiAttacco(personaggio, nemico, mossaScelta);
                     if (nemico.SaluteAttuale <= 0) return EsitoIncontro.Vittoria;
                 }
-                
+
                 continue;
             }
 
@@ -278,8 +278,7 @@ public static class ServizioIncontri
             case StatoMenu.Principale:
                 Console.SetCursorPosition(center, middle);
                 Console.Write("[R] Inventario   Combatti [E]");
-                Console.SetCursorPosition(center, middle + 1);
-                Console.Write("         [Q] Scappa");
+                Program.StampaTasto("[Q] Scappa");
                 break;
 
             case StatoMenu.Mosse:
@@ -289,37 +288,34 @@ public static class ServizioIncontri
                     var mossa = p.Equipaggiamenti.MosseEquipaggiate[i];
                     Console.Write($"[{i + 1}] {(mossa?.Nome ?? "---")}   ");
                 }
-                Console.SetCursorPosition(center, middle + 1);
-                Console.Write("[Q] Indietro");
+                Program.StampaTasto("[Q] Indietro");
                 break;
 
             case StatoMenu.Inventario:
                 Console.SetCursorPosition(center, middle);
                 Console.Write("[1] Pozioni    [2] Supporti");
                 Console.SetCursorPosition(center, middle + 1);
-                Console.Write("[3] Offensivi  [Q] Indietro");
+                Console.Write("      [3] Offensivi");
+                Program.StampaTasto("[Q] Indietro");
                 break;
 
             case StatoMenu.Inventario_Pozioni:
                 Console.SetCursorPosition(center, middle);
                 Console.Write("Pozioni disponibili:");
                 // Qui stamperai le pozioni
-                Console.SetCursorPosition(center, middle + 2);
-                Console.Write("[Q] Indietro");
+                Program.StampaTasto("[Q] Indietro");
                 break;
 
             case StatoMenu.Inventario_Supporti:
                 Console.SetCursorPosition(center, middle);
                 Console.Write("Supporti disponibili:");
-                Console.SetCursorPosition(center, middle + 2);
-                Console.Write("[Q] Indietro");
+                Program.StampaTasto("[Q] Indietro");
                 break;
 
             case StatoMenu.Inventario_Offensivi:
                 Console.SetCursorPosition(center, middle);
                 Console.Write("Oggetti offensivi:");
-                Console.SetCursorPosition(center, middle + 2);
-                Console.Write("[Q] Indietro");
+                Program.StampaTasto("[Q] Indietro");
                 break;
         }
     }
